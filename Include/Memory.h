@@ -12,7 +12,7 @@ private:
 	char Ram[0xFFFF];
 
 public:
-	//need to implement readwrite fucition of the rom.
+	//need to implement read/write fucition of the rom.
 	void write8(uint16_t address, uint8_t value);
 	void write16(uint16_t address, uint16_t value );
 	void readValue(uint16_t address);

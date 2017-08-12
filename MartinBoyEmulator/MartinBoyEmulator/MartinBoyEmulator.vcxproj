@@ -119,7 +119,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\Include\CPU.h" />
     <ClInclude Include="..\..\Include\Memory.h" />
-    <ClInclude Include="..\..\Include\Opcodes.h" />
+    <ClInclude Include="..\..\Include\Opnames.h" />
     <ClInclude Include="..\..\Include\Registers.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

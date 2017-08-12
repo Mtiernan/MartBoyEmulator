@@ -1,9 +1,12 @@
-#pragma once
+#ifndef Opnames_H
+#define Opnames_H
 #include<iostream>
 #include<string>
 #include<fstream>
 using namespace std;
 
+//orginally a file used for the basic gameboy disassembler but ended up using it in main program
+//contains various defintions and run times of the opcodes
 
 int opcodebytesize[256] =
 {
@@ -44,3 +47,7 @@ string opnames[256] =
 	"LDH (a8),A", "POP HL", "LD (C),A", "Unused", "Unused", "PUSH HL","AND d8","RST 20H","ADD SP,r8","JP (HL)","LD (a16),A","Unused","Unused","Unused","XOR d8","RST 28H",
 	"LDH A,(a8)","POP AF","LD A,(C)","DI", "Unused","PUSH AF", "OR d8", "RST 30H", "LD HL,SP+r8", "LD SP,HL", "LD A,(a16)","EI", "Unused", "Unused","CP d8","RST 38H"
 };
+
+
+
+#endif
