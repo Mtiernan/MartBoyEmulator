@@ -114,7 +114,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\CPU.cpp" />
-    <ClCompile Include="Main.cpp" />
+    <ClCompile Include="Windows.cpp" />
+    <ClCompile Include="Memory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\CPU.h" />

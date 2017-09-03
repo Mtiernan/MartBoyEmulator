@@ -8,14 +8,25 @@
 class Memory {
 
 private:
-	//seperate ram later so program can't write over the rom
-	char Ram[0xFFFF];
+	/*there are two places in memory unaccounted for. E000 - FDFF and FEA0 - FEFF. 
+	  The first being "echo ram" a duplicated of the WRAM and the second being an undocumented
+	  and unused area in the memory*/
+
+	uint8_t romCart[0x8000];
+	uint8_t vram[0x2000];
+	uint8_t eram[0x2000]; //can be extedended up to 32kb.
+	uint8_t wram[0x2000];
+	uint8_t oam[0x100];
+	uint8_t ioReg[0x80];
+	uint8_t hram[0x80];
 
 public:
-	//need to implement read/write fucition of the rom.
+	//need to implement read/write fucition of the .
 	void write8(uint16_t address, uint8_t value);
 	void write16(uint16_t address, uint16_t value );
-	void readValue(uint16_t address);
+	uint16_t read16(uint16_t address);
+	uint8_t read8(uint16_t address);
+	void loadRom();
 };
 
 

@@ -10,7 +10,7 @@ using namespace std;
 int main() {
 	
 	ifstream file("tetris.gb", ifstream::binary);
-	//load file into stream named file
+	//load file into stream named file tetris is used as an example/test
 
 	int length, PC;
 	PC = 0;
