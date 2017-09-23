@@ -1,4 +1,4 @@
-#pragma once
+
 #ifndef MEMORY_H
 #define MEMORY_H
 #include <stdint.h>
@@ -28,7 +28,6 @@ public:
 	uint8_t read8(uint16_t address);
 	void loadRom();
 };
-
 
 
 

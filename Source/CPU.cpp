@@ -1,6 +1,6 @@
-#include "Registers.h"
-#include "CPU.h"
 
+#include "CPU.h"
+#include "Opnames.h"
 
 
 
@@ -11,39 +11,31 @@ void StartCpu(){
 	
 	
 };
+void Z80::setflag(uint8_t flag)
+{
+	//set flag based on value
 
-void handleOpCode(uint8_t opcode) {
+
+
+}
+void Z80::clearFlags()
+{
+	//need to clear flags on cpu. 
+
+
+
+}
+void Z80::readOp(uint8_t opcode) {
 
 	switch (opcode) {
 	case 0x00:
-		//unimplemented opcode
 		break;
-
-	case 0x01:
-		//unimplemented opcode
-		break;
-
-	case 0x02:
-		//unimplemented opcode
-		break;
-
-	case 0x03:
-		//unimplemented opcode
-		break;
-	case 0x04:
-		//unimplemented opcode
-		break;
-
-	case 0x05:
-		//unimplemented opcode
-		break;
-
-	case 0x06:
-		//unimplemented opcode
-		break;
-
-	case 0x07:
-		//unimplemented opcode
-		break;
+	
+	default:
+		exit(0);
+	
 	}
+	pc += opcodeByteSize[opcode];
+	cycles += opcodeCycleCount[opcode];
 }
+

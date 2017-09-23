@@ -40,7 +40,7 @@ int main() {
 
 	}
 	//go through buffer printing out commands
-
+	
 
 	return 0;
 }
