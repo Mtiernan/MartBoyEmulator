@@ -3,12 +3,22 @@
 #include <fstream>
 using namespace std;
 
+Memory::Memory() 
+{
+
+	
+
+
+
+}
 void Memory::loadRom() {
 	/*	//Warning the romcart is only allocated for 0x8000 bytes of memory because that is what is needed for the tetris cart of the original gameboy. 
-	Which means any other size is not supported and will cause errors and possibly destroy the world. 
+	Which means if the rom you are loading uses rom banking this function does not work 
 	*/
 
-	ifstream file("tetris.gb", ios::in | ifstream::binary);
+
+	ifstream file("tetris.gb", ifstream::binary);
+	
 	//load file into stream named file tetris is used as an example/test
 
 	int length;

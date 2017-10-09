@@ -11,7 +11,7 @@ public:
 	
 
 
-private:
+//private:
 	//the regestiers of the z80
 	sixteenbitregisters AF,BC,DE,HL;
 
@@ -24,7 +24,7 @@ private:
 
 	//variable to keep track of cycles. 
 	int cycles;
-
+	Z80();
 	void setflag(uint8_t flag);
 	void clearFlags();
 	void readOp(uint8_t opcode);

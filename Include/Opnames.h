@@ -52,7 +52,7 @@ int opcodeByteSize[256] =
 	2,1,2,1,1,1,2,1,2,1,3,1,1,1,2,1
 };
 
-string opnames[256] =
+string opNames[256] =
 {
 	"NOP", "LD BC, d16", "LD (BC), A","INC BC", "INC B", "DEC B", "LD B, d8", "RLCA", "LD (a16),SP", "Add Hl,BC", "LD A, (BC)","DEC BC", "INC C", "DEC C", "LD C, D8", "RRCA",
 	"STOP 0", "LD DE, d16","Ld (DE), A", "INC DE", "INC D", "DEC D", "LD D, d8", "RLA", "JR r8", "Add HL,DE", "LD A, DE", "DEC DE", "INC E", "DEC E", "LD E, d8" ,"RRA",
