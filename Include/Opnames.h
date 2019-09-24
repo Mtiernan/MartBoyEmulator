@@ -7,7 +7,6 @@
 
 using namespace std;
 
-//contains various defintions and run times of the opcodes
 int opcodeCycleCount[256] = 
 {
 	4, 12, 8, 8, 4, 4, 8, 4, 20, 8, 8, 8, 4, 4, 8, 4,
@@ -26,9 +25,6 @@ int opcodeCycleCount[256] =
 	20, 12, 16, 0, 24, 16, 8, 16, 20, 16, 16, 0, 24, 0, 8, 16,
 	12, 12, 8, 0, 0, 16, 8, 16, 16, 4, 16, 0, 0, 0, 8, 16,
 	12, 12, 8, 4, 0, 16, 8, 16, 12, 8, 16, 4, 0, 0, 8, 16
-
-
-
 
 };
 

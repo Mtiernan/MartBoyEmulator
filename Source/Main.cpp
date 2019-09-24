@@ -1,24 +1,23 @@
 #include <CPU.h>
+#include <PPU.h>
+#include <iostream>
 
-
-int main()
+int main(int argc, char*args[])
 {
 	bool quit = false;
-	Z80 Emulator;
-	Emulator.Mem.loadRom();
+	CPU Emulator;
+	Emulator.Mem->loadRom();
 
 	Emulator.pc = 0x100;
 
-	int x = 80000; // to prevent stuck loops while i loop through the program looking for opcodes to implment
+	PPU ppu;
 
-	while (quit == false || x == 0) {
-
-		//while the cpu is active we contiue doing operations
-		Emulator.readOp(Emulator.Mem.read8(Emulator.pc));
-
-		//this variable is temporay as I run this program to find the next unimplemted opcode
-		x--;
-
+    //ppu.vid.int_window();
+	//ppu.vid.render();
+	//below temp code to fetch next unimpemented opcode
+	for(int x = 0; x < 8000; x++)
+	{
+		Emulator.update();
 	}
 
 	return 0;

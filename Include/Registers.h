@@ -10,7 +10,6 @@
 	
 	};
 
-// the sixteen bit pairs that will be acutally used in the implemtation of the cpu. 
 	struct sixteenbitregisters {
 		eightbitregisters highbit, lowbit;
 

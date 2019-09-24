@@ -4,32 +4,26 @@
 #include "Registers.h"
 
 #include "Memory.h"
-
-class Z80 {
+const int MAXCYCLES = 69905;
+class CPU {
 
 public:
 	
 
 
 //private:
-	//the regestiers of the z80
 	sixteenbitregisters AF,BC,DE,HL;
-
-	//the emulated memory space
-	Memory Mem;
-
-	//stack pointer and the program counter
+	Memory* Mem;
 	uint16_t sp, pc;
 
 
 	//variable to keep track of cycles. 
 	int cycles;
-	Z80();
-	void setflag(uint8_t flag);
-	void clearFlags();
+
+	CPU();
 	void readOp(uint8_t opcode);
-
-
+	void update();
+	void add(uint8_t reg);
 
 };
 
