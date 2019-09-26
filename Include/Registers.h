@@ -4,15 +4,8 @@
 
 #include <stdint.h> 
 //the z80 uses eightbit regiisters A, F, B, C, D, E, H ,L however they are used in pairs
-	struct eightbitregisters {
-	public:
-		uint8_t value;
-	
-	};
-
-	struct sixteenbitregisters {
-		eightbitregisters highbit, lowbit;
-
+	struct sixReg {
+		uint8_t highbit, lowbit;
 	};
 
 

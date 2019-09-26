@@ -26,17 +26,12 @@ public:
 private:
 	SDL_Window* win;
 	SDL_Renderer* ren;
-	SDL_Surface* sur;
-
 };
-
-
 
 class PPU
 {
 	public:
 	Video vid;
-
 };
 
 

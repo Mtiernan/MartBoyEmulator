@@ -15,7 +15,7 @@ int main(int argc, char*args[])
     //ppu.vid.int_window();
 	//ppu.vid.render();
 	//below temp code to fetch next unimpemented opcode
-	for(int x = 0; x < 8000; x++)
+	for(int x = 0; x < 8000000; x++)
 	{
 		Emulator.update();
 	}
