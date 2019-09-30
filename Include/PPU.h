@@ -7,17 +7,20 @@
 #define GBWIDTH 160
 #define GBHEIGHT 144
 
-enum mode
-{
+enum mode{
 	HBLANK,
 	VBLANK,
 	OAM,
 	VRAM
 };
 
-class Video
 
-{
+struct tile{
+	uint16_t lines[8];
+};
+
+//contains all SDL calls
+class Video{
 public:
 	int int_window();
 	void render();
@@ -28,10 +31,24 @@ private:
 	SDL_Renderer* ren;
 };
 
-class PPU
-{
+class PPU{
 	public:
 	Video vid;
+	int vcycles, cline;
+	mode amode;
+	bool LCDenabled;
+	uint8_t status;
+
+	void scanLine();
+	void render();
+
+	void update();
+	
+	void oamMode();
+	void hblank();
+	void vblank();
+	void transfer();
+
 };
 
 

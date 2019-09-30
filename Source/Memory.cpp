@@ -15,11 +15,9 @@ void Memory::loadRom() {
 	/*	//Warning the romcart is only allocated for 0x8000 bytes of memory because that is what is needed for the tetris cart of the original gameboy. 
 	Which means if the rom you are loading uses rom banking this function does not work 
 	*/
-
 	ifstream file("tetris.gb", ifstream::binary);
 	
 	//load file into stream named file tetris is used as an example/test
-
 	int length;
 
 	file.seekg(0, file.end);
@@ -70,8 +68,8 @@ uint16_t Memory::read16(uint16_t address)
 void Memory::write8(uint16_t address, uint8_t value)
 {
 	//read a byte from mermory
-	if (address <= 0x7FFF)
-	{
+	if (address <= 0x7FFF){
+		std::cout << "don't write to ROM idiot";
 
 	}
 	else if (0x7FFF < address && address <= 0x9FFF)
@@ -88,9 +86,6 @@ void Memory::write8(uint16_t address, uint8_t value)
 
 	else if (0xff79 < address && address <= 0xfffe)
 		hram[address - 0xff80] = value;
-
-
-
 }
 
 void Memory::write16(uint16_t address, uint16_t value) {

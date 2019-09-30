@@ -1,15 +1,13 @@
 #include <CPU.h>
 #include <PPU.h>
 #include <iostream>
-
+// days of coding consecitivelly: 1
 int main(int argc, char*args[])
 {
 	bool quit = false;
 	CPU Emulator;
 	Emulator.Mem->loadRom();
-
 	Emulator.pc = 0x100;
-
 	PPU ppu;
 
     //ppu.vid.int_window();

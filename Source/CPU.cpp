@@ -4,24 +4,25 @@
 #include <iostream>
 using namespace std;
 //known implementation flaws:
-//-conditional PC increments
+//-conditional PC increments/cycle count
 //-flag handling
 //-interrupt handling 
-//-add(sixreg,sixreg) 
-//opcodes: 3C,19,d9
+//opcodes: 3C,d9
 
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
+	
 	Mem = new Memory();
 	cycles = 0; 
+	intrpt = false;
 	sp = 0;
 	pc = 0;
 	AF.highbit = 243;
 }
+
 void StartCpu(){
 		
 };
-
 void CPU::readOp(uint8_t opcode) {
 	advpc = true;
 	switch (opcode) {
@@ -33,7 +34,8 @@ void CPU::readOp(uint8_t opcode) {
 		case 0x11: LDnn(DE, pc + 1); break;
 		case 0x13: incr(DE); break;
 		case 0x16: LDn(DE.highbit, pc + 1); break;
-		case 0x19: add(HL, BC); break; //flags unimplemented 
+		case 0x18: JRc(true); break;
+		case 0x19: add(HL, BC); break; 
 		case 0x1A: LDn(AF.highbit, DE.highbit << 8 | DE.lowbit); break;
 		case 0x20: JRc(!flags.zero); break;
 		case 0x21: LDnn(HL,pc+1); break;
@@ -65,18 +67,25 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xFE: CPn(Mem->read8(pc + 1)); break;
 		case 0xF3: IME = false; break;
 
-	default:
-		cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<"\n";
-		exit(0);
-	}
+		default:
+			cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<"\n";
+			exit(0);}
 	if(advpc) 
 		pc += opcodeByteSize[opcode];
 	cycles += opcodeCycleCount[opcode];
 }
-void CPU::update(){
-		readOp(Mem->read8(pc));
-}
+void CPU::interrupt(uint16_t value) {
+	push(pc);
+	pc = value;
 
+}
+void CPU::update(){
+	if (intrpt && IME)
+		interrupt(0x00); //pass in the interrupt
+	else
+		readOp(Mem->read8(pc));
+
+}
 void CPU::xOR(uint8_t reg){
 	AF.highbit = reg ^ reg;
 	if (AF.highbit == 0)
@@ -88,7 +97,6 @@ void CPU::LDnn(sixReg &reg, uint16_t address){
 	reg.lowbit = Mem->read8(address);
 	reg.highbit = Mem->read8(address);
 }
-
 void CPU::LDn(uint8_t &reg, uint16_t address){
 	reg = Mem->read8(address);
 }
@@ -118,7 +126,6 @@ void CPU::JRc(bool flag){
 	else
 		advpc = true;
 }
-
 void CPU::LDar(uint16_t address, uint8_t value){
 	Mem->write8(address, value);
 }
@@ -143,14 +150,12 @@ void CPU::clearFlags()
 	flags.halfcarry = false;
 	flags.subtract = false;
 }
-void CPU::call(uint16_t address)
-{
+void CPU::call(uint16_t address){
 	sp = sp - 2;
 	Mem->write16(sp, pc + 2);
 	pc = address;
 	advpc = false; 	
 }
-
 void CPU::And(uint8_t reg)
 {
 	clearFlags();
@@ -180,16 +185,25 @@ void CPU::ret() {
 	advpc = false;
 }
 void CPU::add(sixReg reg, sixReg reg2) {
-	//todo set carry and half carry flags
 	flags.subtract = false;
 	bool carry = false;
+	if (reg.lowbit + reg2.lowbit < reg.lowbit)
+		carry = true;
 
 	reg.lowbit = reg.lowbit + reg2.lowbit;
-	if (flags.carry)
-		reg.highbit = reg.highbit + reg.highbit + 1;
+
+	if ((((reg.highbit & 0xf) + (reg2.highbit & 0xf)) & 0x10) == 0x10)
+		flags.halfcarry = true;
+	else
+		flags.halfcarry = false;
+
+	if (reg.highbit + reg2.highbit < reg.highbit)
+		flags.carry = true;
+
+	if (carry)
+			reg.highbit = reg.highbit + reg.highbit + 1;
 	else
 		reg.highbit = reg.highbit + reg.highbit;
-	//incomplete
 }
 void CPU::push(sixReg reg) {
 	Mem->write8(sp - 1, reg.highbit);

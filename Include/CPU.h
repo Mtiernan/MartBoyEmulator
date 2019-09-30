@@ -6,8 +6,7 @@
 #include "Memory.h"
 const int MAXCYCLES = 69905;
 
-struct Flags
-{
+struct Flags{
 	bool zero;
 	bool carry;
 	bool subtract;
@@ -22,16 +21,26 @@ public:
 	Flags flags;
 	Memory* Mem;
 	uint16_t sp, pc;
+	bool intrpt; 
 	bool advpc;
 	bool IME;
 	int cycles;
 	CPU();
-	void clearFlags();
 
+	//cpu state handling functions
+	void clearFlags();
+	void readOp(uint8_t opcode);
+	void interrupt(uint16_t value);
+	void update();
+
+
+	//opcode functions 
 	void xOR(uint8_t value);
 	void And(uint8_t value);
 	void add(sixReg reg, sixReg reg2);
 	void adc(uint8_t value);
+	void sbc();
+	void sub();
 	void LDnn(sixReg &reg, uint16_t address);
 	void LDn(uint8_t &reg, uint16_t address);
 	void LDDrn(uint8_t& reg, sixReg& reg2, bool neg);
@@ -46,8 +55,6 @@ public:
 	void inc(uint16_t address);
 	void ret();
 	void call(uint16_t address);
-	void readOp(uint8_t opcode);
-	void update();
 
 };
 
