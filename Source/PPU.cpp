@@ -27,6 +27,7 @@ void Video::render(){
 }
 
 void PPU::update() {
+
 	if (LCDenabled) {
 		switch (amode) {
 			case VBLANK:

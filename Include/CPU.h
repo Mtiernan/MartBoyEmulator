@@ -39,6 +39,9 @@ public:
 	void And(uint8_t value);
 	void add(sixReg reg, sixReg reg2);
 	void adc(uint8_t value);
+	void incn(uint8_t &reg);
+	void decn(uint8_t &reg);
+	void RLCr(uint8_t &reg);
 	void sbc();
 	void sub();
 	void LDnn(sixReg &reg, uint16_t address);
@@ -55,6 +58,8 @@ public:
 	void inc(uint16_t address);
 	void ret();
 	void call(uint16_t address);
+	void decnn(sixReg &reg);
+	void Or(uint8_t reg);
 
 };
 

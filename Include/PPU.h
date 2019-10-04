@@ -32,12 +32,16 @@ private:
 };
 
 class PPU{
+
 	public:
+
 	Video vid;
+	//status managment
 	int vcycles, cline;
 	mode amode;
 	bool LCDenabled;
 	uint8_t status;
+	uint8_t scrX, scrY;
 
 	void scanLine();
 	void render();

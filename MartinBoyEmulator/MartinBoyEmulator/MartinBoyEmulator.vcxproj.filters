@@ -24,7 +24,7 @@
     <ClCompile Include="..\..\Source\CPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PPU.cpp">
+    <ClCompile Include="..\..\Source\PPU.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

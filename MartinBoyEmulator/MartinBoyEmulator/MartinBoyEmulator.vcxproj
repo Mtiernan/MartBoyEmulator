@@ -129,7 +129,7 @@
     </ClCompile>
     <ClCompile Include="..\..\Source\Main.cpp" />
     <ClCompile Include="..\..\Source\Memory.cpp" />
-    <ClCompile Include="PPU.cpp" />
+    <ClCompile Include="..\..\Source\PPU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\CPU.h" />

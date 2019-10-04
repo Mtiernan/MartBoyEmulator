@@ -51,7 +51,9 @@ uint8_t Memory::read8(uint16_t address) {
 	else if (0xfdff < address && address <= 0xFE9F)
 		return oam[address - 0xfe00];
 
-	else if (address == 0xff04) return 0;
+	else if (0xFF00 <= address &&  address <0xFF80) 
+		return ioreg[address - 0xff00];
+
 	else if (0xff79 < address && address <= 0xfffe)
 		return hram[address - 0xff80];
 
@@ -63,13 +65,13 @@ uint8_t Memory::read8(uint16_t address) {
 uint16_t Memory::read16(uint16_t address)
 {//combines two values from memory into a 16 bit value
 
-	return (read8(address) | (read8(address + 1) << 8));
+	return (read8(address)  | (read8(address + 1) << 8));
 }
 void Memory::write8(uint16_t address, uint8_t value)
 {
 	//read a byte from mermory
 	if (address <= 0x7FFF){
-		std::cout << "don't write to ROM idiot";
+	//	std::cout << "don't write to ROM idiot " << address <<  endl;
 
 	}
 	else if (0x7FFF < address && address <= 0x9FFF)
@@ -83,6 +85,8 @@ void Memory::write8(uint16_t address, uint8_t value)
 
 	else if (0xfdff < address && address <= 0xFEFF)
 		oam[address - 0xfe00] = value;
+	else if (0xFF00 <= address && address < 0xFF80)
+		 ioreg[address - 0xff00] = value;
 
 	else if (0xff79 < address && address <= 0xfffe)
 		hram[address - 0xff80] = value;
