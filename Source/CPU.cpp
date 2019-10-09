@@ -25,38 +25,40 @@ void StartCpu(){
 		
 };
 void CPU::readOp(uint8_t opcode) {
- 	advpc = true;
-	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
+ 
+	cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
+	pc++;
 	switch (opcode) {
 		case 0x00:  break; 
-		case 0x01: LDnn(BC, pc + 1); break;
+		case 0x01: LDnn(BC, pc++); pc++;  break;
 		case 0x05: decn(BC.highbit); break;
-		case 0x06: LDn(BC.highbit, pc + 1); break;
+		case 0x06: LDn(BC.highbit, pc++); break;
 		case 0x07: RLCr(AF.highbit); break;
-		case 0x08: Mem->write16(Mem->read16(pc + 1), sp); break;
+		case 0x08: Mem->write16(Mem->read16(pc++), sp); pc++; break;
 		case 0x0B: decnn(BC); break;
 		case 0x0D: decn(BC.lowbit); break;
-		case 0x0E: LDn(BC.lowbit, pc+1);break;
-		case 0x11: LDnn(DE, pc + 1); break;
+		case 0x0C: incn(BC.lowbit); break;
+		case 0x0E: LDn(BC.lowbit, pc++); break;
+		case 0x11: LDnn(DE, pc++); pc++; break;
 		case 0x13: incr(DE); break;
-		case 0x16: LDn(DE.highbit, pc + 1); break;
+		case 0x16: LDn(DE.highbit, pc++); pc++; break;
 		case 0x18: JRc(true); break;
 		case 0x19: add(HL, BC); break; 
 		case 0x1A: LDn(AF.highbit, DE.highbit << 8 | DE.lowbit); break;
 		case 0x1D: decn(DE.lowbit); cout << "e is : " << DE.lowbit; break;
 		case 0x20: JRc(!flags.zero); break;
-		case 0x21: LDnn(HL,pc+1); break;
+		case 0x21: LDnn(HL,pc++); pc++; break;
 		case 0x22: LDDrn(AF.highbit, HL, false); break;
 		case 0x25: decn(HL.highbit);   break;
 		case 0x28: JRc(flags.zero); break;
 		case 0x2A: LDDrn(AF.highbit, HL, false); break;
 		case 0x2f: AF.highbit = ~AF.highbit; break; //io handling must work for the correct values to be given
-		case 0x31: sp = Mem->read16(pc + 1);
+		case 0x31: sp = Mem->read16(pc++); pc++; break;
 		case 0x32: LDDrn(AF.highbit, HL,true);  break;
 		case 0x34: incr(HL); break;
-		case 0x36: Mem->write8(HL.toint(), Mem->read8(pc + 1)); break;
+		case 0x36: Mem->write8(HL.toint(), Mem->read8(pc++)); break;
 		case 0x3C: incn(AF.highbit); break;
-		case 0x3E: LDn(AF.highbit, pc + 1); break;
+		case 0x3E: LDn(AF.highbit, pc++);  break;
 		case 0x66: LDn(HL.highbit, HL.highbit << 8 | HL.lowbit); break;
 		case 0x78: AF.highbit = BC.highbit; break;
 		case 0xA7: And(AF.highbit); break;
@@ -64,25 +66,25 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xB1: Or(BC.lowbit); break;
 		case 0xC0: if (!flags.zero) ret(); break;
 		case 0xC1: pop(BC); break;
-		case 0xC3: pc = Mem->read16(pc + 1); advpc = false; break;
+		case 0xC3: pc = Mem->read16(pc++); break;
 		case 0xC9: ret(); break;
-		case 0xCD: if (flags.zero) call(Mem->read16(pc + 1)); advpc = false;  break;
+		case 0xCD: if (flags.zero) call(Mem->read16(pc++)); break;
 		case 0xCE: adc(AF.highbit); break;
-		case 0xCF: push(pc); pc = 0x08; advpc = false;
+		case 0xCF: push(pc); pc = 0x08; 
 		case 0xD1: pop(DE); break;
 		case 0xD5: push(DE); break;
 		case 0xD9: ret(); break; //called after interrupts todo: handle interrupts
-		case 0xE0: LDar(0xff00 + Mem->read8(pc +1),AF.highbit); break;
+		case 0xE0: LDar(0xff00 + Mem->read8(pc++),AF.highbit); break;
 		case 0xE1: pop(HL); break;
 		case 0xE2: LDar(0xff00 + BC.lowbit, AF.highbit); break;
 		case 0xE5: push(HL); break;
-		case 0xE6: And(Mem->read8(pc + 1)); break;
-		case 0xEA: LDra(AF.highbit, Mem->read8(Mem->read16(pc + 1))); break;
-		case 0xF0: LDra(AF.highbit, 0xff00 + Mem->read8(pc+1)); break;
+		case 0xE6: And(Mem->read8(pc++)); break;
+		case 0xEA: LDra(AF.highbit, Mem->read8(Mem->read16(pc++))); pc++; break;
+		case 0xF0: LDra(AF.highbit, 0xff00 + Mem->read8(pc++)); break;
 		case 0xF1: pop(AF); break;
-		case 0xFA: LDn(AF.highbit, Mem->read8(pc) | Mem->read8(pc + 1) << 8); break;
+		case 0xFA: LDn(AF.highbit, Mem->read8(pc++) | Mem->read8(pc++) << 8); break;
 		case 0xFB: IME = true; break;
-		case 0xFE: CPn(Mem->read8(pc + 1)); break;
+		case 0xFE: CPn(Mem->read8(pc++)); break;
 		case 0xF3: IME = false; break;
 
 		default:
@@ -90,8 +92,6 @@ void CPU::readOp(uint8_t opcode) {
 			exit(0);}
 	if (pc > 0x8000)
 		cout << "PC outside of scope";
-	if(advpc) 
-		pc += opcodeByteSize[opcode];
 	cycles += opcodeCycleCount[opcode];
 }
 void CPU::interrupt(uint16_t value) {
@@ -131,14 +131,11 @@ void CPU::LDDrn(uint8_t& reg, sixReg& reg2, bool neg){
 	reg2.lowbit = address;
 }
 void CPU::JRc(bool flag){
-	if (flag){
-		advpc = false;
-		int8_t x =  Mem->read8(pc + 1);
-		pc = pc + x + 2; 
+	int8_t x = Mem->read8(pc++);
+	if (flag) {
+		pc = pc + x;
 		cycles += 4;
 	}
-	else
-		advpc = true;
 }
 void CPU::LDar(uint16_t address, uint8_t value){
 	Mem->write8(address, value);
@@ -166,9 +163,9 @@ void CPU::clearFlags()
 }
 void CPU::call(uint16_t address){
 	sp = sp - 2;
-	Mem->write16(sp, pc + 3);
+	Mem->write16(sp, pc + 1);
 	pc = address;
-	advpc = false; 	
+	
 }
 void CPU::And(uint8_t reg)
 {
@@ -196,7 +193,6 @@ void CPU::pop(sixReg reg){
 void CPU::ret() {
 	pc = Mem->read8(sp) | Mem->read8(sp + 1)<< 8;
 	sp += 2;
-	advpc = false;
 }
 void CPU::add(sixReg reg, sixReg reg2) {
 	flags.subtract = false;

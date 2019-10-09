@@ -65,7 +65,7 @@ uint8_t Memory::read8(uint16_t address) {
 uint16_t Memory::read16(uint16_t address)
 {//combines two values from memory into a 16 bit value
 
-	return (read8(address)  | (read8(address + 1) << 8));
+	return (read8(address)  | (read8( address + 1 ) << 8));
 }
 void Memory::write8(uint16_t address, uint8_t value)
 {

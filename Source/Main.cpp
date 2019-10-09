@@ -1,7 +1,7 @@
 #include <CPU.h>
 #include <PPU.h>
 #include <iostream>
-// Streak: 3
+// Streak: 0
 int main(int argc, char*args[])
 {
 	bool quit = false;

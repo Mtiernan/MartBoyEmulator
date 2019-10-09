@@ -22,7 +22,6 @@ public:
 	Memory* Mem;
 	uint16_t sp, pc;
 	bool intrpt; 
-	bool advpc;
 	bool IME;
 	int cycles;
 	CPU();
