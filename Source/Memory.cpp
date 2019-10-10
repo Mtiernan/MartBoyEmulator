@@ -12,8 +12,8 @@ Memory::Memory()
 
 }
 void Memory::loadRom() {
-	/*	//Warning the romcart is only allocated for 0x8000 bytes of memory because that is what is needed for the tetris cart of the original gameboy. 
-	Which means if the rom you are loading uses rom banking this function does not work 
+	/*	Warning the romcart is only allocated for 0x8000 bytes of memory because that is what is needed for the tetris cart of the original gameboy. 
+	Which means THIS DOESN'T SUPPORT ROM BANKING
 	*/
 	ifstream file("tetris.gb", ifstream::binary);
 	
@@ -34,7 +34,7 @@ void Memory::loadRom() {
 
 uint8_t Memory::read8(uint16_t address) {
 
-	//read a memory from the correct section oo
+	
 
 	if (address <= 0x7FFF)
 		return romcart[address];

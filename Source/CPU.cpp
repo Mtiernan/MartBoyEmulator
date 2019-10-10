@@ -3,12 +3,12 @@
 #include "Opnames.h"
 #include <iostream>
 using namespace std;
+
 //known implementation flaws:
 //-conditional PC increments/cycle count
 //-interrupt handling 
-//advace pc after read/refactor pc handling
-//IO handling
-//cb prefix handeling
+//-IO handling doesn't exist
+//-cb prefix handeling
 
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
@@ -26,7 +26,7 @@ void StartCpu(){
 };
 void CPU::readOp(uint8_t opcode) {
  
-	cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
+	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
 	pc++;
 	switch (opcode) {
 		case 0x00:  break; 
@@ -88,8 +88,9 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xF3: IME = false; break;
 
 		default:
-			cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<"\n" <<"PC: " <<pc;
-			exit(0);}
+			cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<" " <<"PC: " <<pc << "\n";
+			//exit(0);
+	}
 	if (pc > 0x8000)
 		cout << "PC outside of scope";
 	cycles += opcodeCycleCount[opcode];

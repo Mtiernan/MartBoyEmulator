@@ -127,12 +127,14 @@
     <ClCompile Include="..\..\Source\CPU.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\Stuff\CSprojects\MyGameboyEmulator\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="..\..\Source\Input.cpp" />
     <ClCompile Include="..\..\Source\Main.cpp" />
     <ClCompile Include="..\..\Source\Memory.cpp" />
     <ClCompile Include="..\..\Source\PPU.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Include\CPU.h" />
+    <ClInclude Include="..\..\Include\Input.h" />
     <ClInclude Include="..\..\Include\Memory.h" />
     <ClInclude Include="..\..\Include\Opnames.h" />
     <ClInclude Include="..\..\Include\PPU.h" />

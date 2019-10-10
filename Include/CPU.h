@@ -33,6 +33,8 @@ public:
 	void update();
 
 
+	void CBcode(uint8_t code);
+
 	//opcode functions 
 	void xOR(uint8_t value);
 	void And(uint8_t value);

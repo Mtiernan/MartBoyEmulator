@@ -9,18 +9,20 @@ int Video::int_window() {
 		return 1;
 	}
 
-	SDL_CreateWindowAndRenderer(GBWIDTH, GBHEIGHT, 0, &win, &ren);
+	SDL_CreateWindowAndRenderer(GBWIDTH * 2, GBHEIGHT* 2, 0, &win, &ren);
 	SDL_RenderClear(ren);
 	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 	SDL_RenderFillRect(ren, NULL);
 	SDL_RenderPresent(ren);
+	SDL_RenderSetScale(ren, 2, 2);
 	return 0;
 }
+
 void Video::render(){
 
-	for (int x = 0; x < 144; x++){
+	for (int x = 0; x < 160; x++){
 		SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-		SDL_RenderDrawPoint(ren,x,50);
+		SDL_RenderDrawPoint(ren,x,72);
 	}
 	SDL_RenderPresent(ren);
 	
