@@ -5,11 +5,15 @@
 #include <stdint.h> 
 //the z80 uses eightbit regiisters A, F, B, C, D, E, H ,L however they are used in pairs
 	struct sixReg {
-		uint8_t highbit, lowbit;
-		uint8_t toint() {
-			uint16_t x = highbit << 8 | lowbit;
+		uint8_t high, low;
+		uint8_t to16() {
+			uint16_t x = high << 8 | low;
 			return x;
 		};
+		void set(uint16_t value){
+			high = value >> 8;
+			low = value;
+		}
 	};
 
 

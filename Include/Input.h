@@ -15,29 +15,32 @@ bit 3: p13 down or start
 bit 2: p12 up or select
 bit 1: p11 left or b
 bit 0: p10 right or a
-
+										ff00 = 1111 1111
 */
 
-enum Button{
-	UP,
-	DOWN,
-	LEFT,
-	RIGHT,
-	SELECT,
-	START,
-	A,	
-	B
+enum button {
+	up,
+	down,
+	left,
+	right,
+	a,
+	b,
+	select,
+	start
 };
 
 class Input {
 private:
 	Memory* mem;
 	CPU* cpu;
+	uint8_t buttons, directions;
 public:
 	Input(Memory* mem, CPU* cpu);
-	void getKey(SDL_Event keyEvent);
-	void buttonPress(Button button);
+	void getKeyDown(SDL_Event keyEvent);
+	void getKeyUp(SDL_Event keyEvent);
+	void buttonPress(button butt, bool held);
 	void reset();
+	void update(Memory* mem);
 };
 
 

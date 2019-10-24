@@ -32,9 +32,6 @@ public:
 	void interrupt(uint16_t value);
 	void update();
 
-
-	void CBcode(uint8_t code);
-
 	//opcode functions 
 	void xOR(uint8_t value);
 	void And(uint8_t value);
@@ -52,6 +49,7 @@ public:
 	void LDar(uint16_t address, uint8_t value);
 	void incr(sixReg reg);
 	void JRc(bool flag);
+	void JPc(bool flag);
 	void CPn(uint8_t value);
 	void pop(sixReg reg);
 	void push(sixReg reg);
@@ -62,6 +60,10 @@ public:
 	void decnn(sixReg &reg);
 	void Or(uint8_t reg);
 
+	void CBcode(uint8_t code);
+	void RLC(uint8_t& reg);
+	void swap(uint8_t& reg);
+	void SRA(uint8_t& reg);
 };
 
 

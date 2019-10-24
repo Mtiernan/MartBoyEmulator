@@ -2,7 +2,7 @@
 #include <Input.h>
 #include <PPU.h>
 #include <iostream>
-// Streak: 1
+// Streak: 2
 int main(int argc, char*args[])
 {
 	SDL_Event event;
@@ -12,10 +12,10 @@ int main(int argc, char*args[])
 	Input input =  Input(Emulator.Mem, &Emulator);
 	Emulator.Mem->loadRom();
 
-	//intializing of values to skip put rom
+	//intializing of values to skip boot rom
 	Emulator.pc = 0x150;
-	Emulator.BC.lowbit = 13;
-	Emulator.DE.lowbit = 48;
+	Emulator.BC.low = 13;
+	Emulator.DE.low = 48;
 	Emulator.Mem->write8(0xff44, 0x94);
 	Emulator.Mem->write8(0xff00, 0xCF); Emulator.sp = 0xFFFE;
 	Emulator.sp = 0xFFFE;
@@ -26,29 +26,23 @@ int main(int argc, char*args[])
 	//main loop
 	while (!quit) {
 
-		//TODO move to a single function call that handles all window events
+		
 		if (SDL_PollEvent(&event))
 			if (event.type == SDL_WINDOWEVENT) {
 				if (event.window.event == SDL_WINDOWEVENT_CLOSE)
 					quit = true;
 			}
 			else if (event.type == SDL_KEYDOWN)
-				input.getKey(event);	//TODO handle input
-	
+				input.getKeyDown(event);
+			else if (event.type == SDL_KEYUP)
+				input.getKeyUp(event);
+
 		while (Emulator.cycles < MAXCYCLES) {
+			input.update(Emulator.Mem);
 			Emulator.update();
 		}
-		//TODO move to a single function call that handles all window events
-		if (SDL_PollEvent(&event))
-			if (event.type == SDL_WINDOWEVENT) {
-				if (event.window.event == SDL_WINDOWEVENT_CLOSE)
-					quit = true;
-			}
-			else if (event.type == SDL_KEYDOWN)
-				input.getKey(event);	//TODO handle input
-	
+		
 		Emulator.cycles = 0;
-
 		ppu.vid.render();
 	}
 	//TODO: DESTROY
