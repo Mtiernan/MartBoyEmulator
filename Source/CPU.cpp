@@ -41,7 +41,7 @@ void CPU::readOp(uint8_t opcode) {
 		case 0x0E: LDn(BC.low, pc++); break;
 		case 0x11: LDnn(DE, pc++); pc++; break;
 		case 0x13: incr(DE); break;
-		case 0x16: LDn(DE.high, pc++); pc++; break;
+		case 0x16: LDn(DE.high, pc++);break;
 		case 0x18: JRc(true); break;
 		case 0x19: add(HL, BC); break; 
 		case 0x1A: LDn(AF.high, DE.high << 8 | DE.low); break;
@@ -81,7 +81,8 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xC9: ret(); break;
 		case 0xCA: JRc(flags.zero);
 		case 0xCB: CBcode(Mem->read8(pc)); break;
-		case 0xCD: if (flags.zero) call(Mem->read16(pc++)); break;
+		case 0xCC: if (flags.zero) call(Mem->read16(pc++)); break;
+		case 0xCD: call(Mem->read16(pc++)); break;
 		case 0xCE: adc(AF.high); break;
 		case 0xCF: push(pc); pc = 0x08; 
 		case 0xD1: pop(DE); break;
@@ -93,7 +94,7 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xE5: push(HL); break;
 		case 0xE6: And(Mem->read8(pc++)); break;
 		case 0xEA: LDra(AF.high, Mem->read8(Mem->read16(pc++))); pc++; break;
-		case 0xE9: pc = HL.to16(); break;
+		case 0xE9: pc = HL.to16(); cout << HL.to16(); break;
 		case 0xEF: push(pc); pc = 0x0028; break;
 		case 0xF0: LDra(AF.high, 0xff00 + Mem->read8(pc++)); break;
 		case 0xF1: pop(AF); break;
@@ -102,10 +103,14 @@ void CPU::readOp(uint8_t opcode) {
 		case 0xFB: IME = true; break;
 		case 0xFE: CPn(Mem->read8(pc++)); break;
 		case 0xF3: IME = false; break;
+		//case 0xFF: push(pc); pc = 0x0038;  break;
 
 		default:
 			cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<" " <<"PC: " <<pc << "\n";
 			exit(0);
+	}
+	if (pc == 0x31) {
+		pc;
 	}
 	if (pc > 0x8000)
 		cout << "PC outside of scope";
@@ -186,8 +191,10 @@ void CPU::clearFlags()
 }
 void CPU::call(uint16_t address){
 	sp = sp - 2;
+	//cout << "storing value: " << std::hex << int(pc + 1) << endl;
 	Mem->write16(sp, pc + 1);
 	pc = address;
+	//cout << "calling value: " << std::hex << int(pc) << endl;
 	
 }
 void CPU::And(uint8_t reg){
@@ -206,13 +213,15 @@ void CPU::inc(uint16_t address)
 {
 	Mem->write8(address, Mem->read8(address) + 1);
 }
-void CPU::pop(sixReg reg){
-	HL.low = Mem->read8(sp);
-	HL.high = Mem->read8(sp + 1);
+void CPU::pop(sixReg& reg){
+	reg.low = Mem->read8(sp);
+	reg.high = Mem->read8(sp + 1);
+   cout << "Poping value: " << std::hex << int(reg.to16())<< endl;
 	sp += 2;
 }
 void CPU::ret() {
-	pc = Mem->read8(sp) | Mem->read8(sp + 1)<< 8;
+	pc = Mem->read8(sp) | Mem->read8(sp + 1 )<< 8;
+	//cout << "retruning value: " << std::hex << int(pc) << endl;
 	sp += 2;
 }
 void CPU::add(sixReg reg, sixReg reg2) {
@@ -237,11 +246,13 @@ void CPU::add(sixReg reg, sixReg reg2) {
 		reg.high = reg.high + reg.high;
 }
 void CPU::push(sixReg reg) {
+	cout << "Pushing reg: " << std::hex << int(reg.to16()) << endl;
 	Mem->write8(sp - 1, reg.high);
 	Mem->write8(sp - 2, reg.low);
 	sp -= 2;
 }
 void CPU::push(uint16_t value) {
+	//cout << "Pushing value: " << std::hex << int(value) << endl;
 	Mem->write16(sp - 2, value);
 	sp -= 2;
 }

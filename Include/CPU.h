@@ -51,7 +51,7 @@ public:
 	void JRc(bool flag);
 	void JPc(bool flag);
 	void CPn(uint8_t value);
-	void pop(sixReg reg);
+	void pop(sixReg& reg);
 	void push(sixReg reg);
 	void push(uint16_t value);
 	void inc(uint16_t address);
