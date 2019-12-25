@@ -17,7 +17,7 @@ int main(int argc, char*args[])
 	Emulator.BC.low = 13;
 	Emulator.DE.low = 48;
 	Emulator.Mem->write8(0xff44, 0x94);
-	Emulator.Mem->write8(0xff00, 0xCF); Emulator.sp = 0xFFFE;
+	Emulator.Mem->write8(0xff00, 0xCF);
 	Emulator.sp = 0xFFFE;
  
 	//intializing window through SDL

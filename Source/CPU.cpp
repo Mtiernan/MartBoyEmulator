@@ -4,11 +4,11 @@
 #include <iostream>
 using namespace std;
 
-//known implementation flaws:
+//known todos:
+//build a debugger
 //-conditional PC increments/cycle count
 //-interrupt handling 
-//-IO handling doesn't exist
-//-cb prefix handeling
+//-DE wrong at pc 29-33w
 
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
@@ -25,92 +25,98 @@ void StartCpu(){
 		
 };
 void CPU::readOp(uint8_t opcode) {
- 
-	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
+
+	cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
 	pc++;
 	switch (opcode) {
-		case 0x00:  break; 
-		case 0x01: LDnn(BC, pc++); pc++;  break;
-		case 0x05: decn(BC.high); break;
-		case 0x06: LDn(BC.high, pc++); break;
-		case 0x07: RLCr(AF.high); break;
-		case 0x08: Mem->write16(Mem->read16(pc++), sp); pc++; break;
-		case 0x0B: decnn(BC); break;
-		case 0x0D: decn(BC.low); break;
-		case 0x0C: incn(BC.low); break;
-		case 0x0E: LDn(BC.low, pc++); break;
-		case 0x11: LDnn(DE, pc++); pc++; break;
-		case 0x13: incr(DE); break;
-		case 0x16: LDn(DE.high, pc++);break;
-		case 0x18: JRc(true); break;
-		case 0x19: add(HL, BC); break; 
-		case 0x1A: LDn(AF.high, DE.high << 8 | DE.low); break;
-		case 0x1D: decn(DE.low); cout << "e is : " << DE.low; break;
-		case 0x20: JRc(!flags.zero); break;
-		case 0x21: LDnn(HL,pc++); pc++; break;
-		case 0x22: LDDrn(AF.high, HL, false); break;
-		case 0x23: incr(HL);
-		case 0x25: decn(HL.high);   break;
-		case 0x28: JRc(flags.zero); break;
-		case 0x2A: LDDrn(AF.high, HL, false); break;
-		case 0x2f: AF.high = ~AF.high; break; //io handling must work for the correct values to be given
-		case 0x31: sp = Mem->read16(pc++); pc++; break;
-		case 0x32: LDDrn(AF.high, HL,true);  break;
-		case 0x34: incr(HL); break;
-		case 0x36: Mem->write8(HL.to16(), Mem->read8(pc++)); break;
-		case 0x3C: incn(AF.high); break;
-		case 0x3E: LDn(AF.high,pc++);  break;
-		case 0x47: BC.high = AF.high; break;
-		case 0x4f: BC.low = AF.high; break;
-		case 0x5E: DE.low = Mem->read8(HL.to16());
-		case 0x56: DE.high = Mem->read8(HL.to16());
-		case 0x5f: DE.low = AF.high; break;
-		case 0x66: LDn(HL.high, HL.high << 8 | HL.low); break;
-		case 0x78: AF.high = BC.high; break;
-		case 0x79: AF.high = BC.low; break;
-		case 0x87: AF.high += AF.high; break;
-		case 0xA1: And(BC.low); break;
-		case 0xA7: And(AF.high); break;
-		case 0xA9: xOR(BC.low); break;
-		case 0xAf: xOR(AF.high); break;
-		case 0xB0: Or(BC.high); break;
-		case 0xB1: Or(BC.low); break;
-		case 0xC0: if (!flags.zero) ret(); break;
-		case 0xC1: pop(BC); break;
-		case 0xC3: pc = Mem->read16(pc++); break;
-		case 0xC9: ret(); break;
-		case 0xCA: JRc(flags.zero);
-		case 0xCB: CBcode(Mem->read8(pc)); break;
-		case 0xCC: if (flags.zero) call(Mem->read16(pc++)); break;
-		case 0xCD: call(Mem->read16(pc++)); break;
-		case 0xCE: adc(AF.high); break;
-		case 0xCF: push(pc); pc = 0x08; 
-		case 0xD1: pop(DE); break;
-		case 0xD5: push(DE); break;
-		case 0xD9: ret(); break; //called after interrupts todo: handle interrupts
-		case 0xE0: LDar(0xff00 + Mem->read8(pc++),AF.high); break;
-		case 0xE1: pop(HL); break;
-		case 0xE2: LDar(0xff00 + BC.low, AF.high); break;
-		case 0xE5: push(HL); break;
-		case 0xE6: And(Mem->read8(pc++)); break;
-		case 0xEA: LDra(AF.high, Mem->read8(Mem->read16(pc++))); pc++; break;
-		case 0xE9: pc = HL.to16(); cout << HL.to16(); break;
-		case 0xEF: push(pc); pc = 0x0028; break;
-		case 0xF0: LDra(AF.high, 0xff00 + Mem->read8(pc++)); break;
-		case 0xF1: pop(AF); break;
-		case 0xF8: HL.set(sp + int8_t(Mem->read8(pc++))); break;
-		case 0xFA: LDn(AF.high, Mem->read8(pc++) | Mem->read8(pc++) << 8); break;
-		case 0xFB: IME = true; break;
-		case 0xFE: CPn(Mem->read8(pc++)); break;
-		case 0xF3: IME = false; break;
-		//case 0xFF: push(pc); pc = 0x0038;  break;
+	case 0x00:  break;
+	case 0x01: LDnn(BC, pc++); pc++;  break;
+	case 0x05: decn(BC.high); break;
+	case 0x06: LDn(BC.high, pc++); break;
+	case 0x07: RLCr(AF.high); break;
+	case 0x08: Mem->write16(Mem->read16(pc++), sp); pc++; break;
+	case 0x0B: decnn(BC); break;
+	case 0x0D: decn(BC.low); break;
+	case 0x0C: incn(BC.low); break;
+	case 0x0E: LDn(BC.low, pc++); break;
+	case 0x11: LDnn(DE, pc++); pc++; break;
+	case 0x13: incr(DE); break;
+	case 0x16: LDn(DE.high, pc++); break;
+	case 0x18: JRc(true); break;
+	case 0x19: add(HL, DE); break;
+	case 0x1A: LDn(AF.high, DE.high << 8 | DE.low); break;
+	case 0x1C: incn(DE.low); break;
+	case 0x1D: decn(DE.low); break;
+	case 0x20: JRc(!flags.zero); break;
+	case 0x21: LDnn(HL, pc++); pc++; break;
+	case 0x22: LDDrn(AF.high, HL, false); break;
+	case 0x23: incr(HL);
+	case 0x25: decn(HL.high);   break;
+	case 0x28: JRc(flags.zero); break;
+	case 0x2A: LDDrn(AF.high, HL, false); break;
+	case 0x2C: incn(HL.low); break;
+	case 0x2F: AF.high = ~AF.high; break;
+	case 0x31: sp = Mem->read16(pc++); pc++; break;
+	case 0x32: LDDrn(AF.high, HL, true);  break;
+	case 0x34: incr(HL); break;
+	case 0x36: Mem->write8(HL.to16(), Mem->read8(pc++)); break;
+	case 0x3C: incn(AF.high); break;
+	case 0x3E: LDn(AF.high, pc++);  break;
+	case 0x47: BC.high = AF.high; break;
+	case 0x4f: BC.low = AF.high; break;
+	case 0x5E: DE.low = Mem->read8(HL.to16());
+	case 0x56: DE.high = Mem->read8(HL.to16());
+	case 0x5f: DE.low = AF.high; break;
+	case 0x66: LDn(HL.high, HL.high << 8 | HL.low); break;
+	case 0x78: AF.high = BC.high; break;
+	case 0x79: AF.high = BC.low; break;
+	case 0x7E: LDra(AF.high, HL.to16()); break;
+	case 0x87: AF.high += AF.high; break;
+	case 0xA1: And(BC.low); break;
+	case 0xA7: And(AF.high); break;
+	case 0xA9: xOR(BC.low); break;
+	case 0xAf: xOR(AF.high); break;
+	case 0xB0: Or(BC.high); break;
+	case 0xB1: Or(BC.low); break;
+	case 0xC0: if (!flags.zero) ret(); break;
+	case 0xC1: pop(BC); break;
+	case 0xC3: pc = Mem->read16(pc++); break;
+	case 0xC5: push(BC); break;
+	case 0xC8: if (flags.zero) ret(); break;
+	case 0xC9: ret(); break;
+	case 0xCA: JPc(flags.zero); break;
+	case 0xCB: CBcode(Mem->read8(pc)); break;
+	case 0xCC: if (flags.zero) call(Mem->read16(pc++)); break;
+	case 0xCD: call(Mem->read16(pc++)); break;
+	case 0xCE: adc(AF.high); break;
+	case 0xCF: push(pc); pc = 0x08;
+	case 0xD1: pop(DE); break;
+	case 0xD5: push(DE); break;
+	case 0xD9: ret(); break;
+	case 0xE0: LDar(0xff00 + Mem->read8(pc++), AF.high); break;
+	case 0xE1: pop(HL); break;
+	case 0xE2: LDar(0xff00 + BC.low, AF.high); break;
+	case 0xE5: push(HL); break;
+	case 0xE6: And(Mem->read8(pc++)); break;
+	case 0xEA: LDra(AF.high, Mem->read8(Mem->read16(pc++))); pc++; break;
+	case 0xE9: pc = HL.to16(); break;
+	case 0xEF: push(pc); pc = 0x0028; break;
+	case 0xF0: LDra(AF.high, 0xff00 + Mem->read8(pc++)); break;
+	case 0xF1: pop(AF); break;
+	case 0xF5: push(AF); break;
+	case 0xF8: HL.set(sp + int8_t(Mem->read8(pc++))); break;
+	case 0xFA: LDn(AF.high, Mem->read8(pc++) | Mem->read8(pc++) << 8); break;
+	case 0xFB: IME = true; break;
+	case 0xFE: CPn(Mem->read8(pc++)); break;
+	case 0xF3: IME = false; break;
 
-		default:
-			cout <<  "unimplemented opcode: "  << opNames[opcode] << " Number: " << hex <<(int)opcode <<" " <<"PC: " <<pc << "\n";
-			exit(0);
+	default:
+		cout << "unimplemented opcode: " << opNames[opcode] << " Number: " << hex << (int)opcode << " " << "PC: " << pc << "\n";
+
+		exit(0);
 	}
 	if (pc == 0x31) {
-		pc;
+		cout << int(DE.to16());
 	}
 	if (pc > 0x8000)
 		cout << "PC outside of scope";
@@ -216,7 +222,7 @@ void CPU::inc(uint16_t address)
 void CPU::pop(sixReg& reg){
 	reg.low = Mem->read8(sp);
 	reg.high = Mem->read8(sp + 1);
-   cout << "Poping value: " << std::hex << int(reg.to16())<< endl;
+    //cout << "Poping value: " << std::hex << int(reg.to16())<< endl;
 	sp += 2;
 }
 void CPU::ret() {
@@ -246,7 +252,7 @@ void CPU::add(sixReg reg, sixReg reg2) {
 		reg.high = reg.high + reg.high;
 }
 void CPU::push(sixReg reg) {
-	cout << "Pushing reg: " << std::hex << int(reg.to16()) << endl;
+	//cout << "Pushing reg: " << std::hex << int(reg.to16()) << endl;
 	Mem->write8(sp - 1, reg.high);
 	Mem->write8(sp - 2, reg.low);
 	sp -= 2;
@@ -343,5 +349,7 @@ void CPU::CBcode(uint8_t code){
 	case 0x37: swap(AF.high); break;
 	default:
 		cout << "unimp CB code: " << hex << int(code) << "\n";
+		cout << "pc " << hex << int(pc) << " " << int(Mem->read8(pc));
+		exit(0);
 	}
 }
