@@ -1,12 +1,8 @@
 
-#include<string>
 #ifndef Opnames_H
 #define Opnames_H
-
-
-
+#include<string>
 using namespace std;
-
 int opcodeCycleCount[256] = 
 {
 	4, 12, 8, 8, 4, 4, 8, 4, 20, 8, 8, 8, 4, 4, 8, 4,

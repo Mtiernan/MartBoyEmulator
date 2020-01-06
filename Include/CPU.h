@@ -60,6 +60,7 @@ public:
 	void decnn(sixReg &reg);
 	void Or(uint8_t reg);
 
+	//CBcode functions
 	void CBcode(uint8_t code);
 	void RLC(uint8_t& reg);
 	void swap(uint8_t& reg);

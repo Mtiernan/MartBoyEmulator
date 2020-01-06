@@ -5,9 +5,10 @@
 using namespace std;
 
 //known todos:
-//build a debugger
+//build a  better debugger
 //-conditional PC increments/cycle count
 //-interrupt handling 
+//bugs:
 //-DE wrong at pc 29-33w
 
 CPU::CPU(){
@@ -26,7 +27,7 @@ void StartCpu(){
 };
 void CPU::readOp(uint8_t opcode) {
 
-	cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
+	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
 	pc++;
 	switch (opcode) {
 	case 0x00:  break;
@@ -115,9 +116,7 @@ void CPU::readOp(uint8_t opcode) {
 
 		exit(0);
 	}
-	if (pc == 0x31) {
-		cout << int(DE.to16());
-	}
+
 	if (pc > 0x8000)
 		cout << "PC outside of scope";
 	cycles += opcodeCycleCount[opcode];

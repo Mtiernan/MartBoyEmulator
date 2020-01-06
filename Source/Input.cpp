@@ -79,6 +79,7 @@ void Input::reset(){
 
 void Input::buttonPress(button butt, bool held){
 
+	//sets correct position to 0 on keydown or back to 1 on keyup
 	switch (butt){
 	case up:
 		if (held)
@@ -106,27 +107,27 @@ void Input::buttonPress(button butt, bool held){
 		break;
 	case a:
 		if (held)
-			directions &= ~(1 << 0);
+			buttons &= ~(1 << 0);
 		else
-			directions |= 1 << 0;
+			buttons |= 1 << 0;
 		break;
 	case b:
 		if (held)
-			directions &= ~(1 << 1);
+			buttons &= ~(1 << 1);
 		else
-			directions |= 1 << 1;
+			buttons |= 1 << 1;
 		break;
 	case select:
 		if (held)
-			directions &= ~(1 << 2);
+			buttons &= ~(1 << 2);
 		else
-			directions |= 1 << 2;
+			buttons |= 1 << 2;
 		break;
 	case start:
 		if (held)
-			directions &= ~(1 << 3);
+			buttons &= ~(1 << 3);
 		else
-			directions |= 1 << 3;
+			buttons |= 1 << 3;
 		break;
 	}
 	

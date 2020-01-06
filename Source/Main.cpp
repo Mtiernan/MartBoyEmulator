@@ -2,9 +2,11 @@
 #include <Input.h>
 #include <PPU.h>
 #include <iostream>
+
 // Streak: 2
 int main(int argc, char*args[])
 {
+	bool debug = false;
 	SDL_Event event;
 	bool quit = false;
 	CPU Emulator;
@@ -40,7 +42,24 @@ int main(int argc, char*args[])
 		while (Emulator.cycles < MAXCYCLES) {
 			input.update(Emulator.Mem);
 			Emulator.update();
+			if (Emulator.pc == 0x28)
+				debug = true;
+			if (debug) {
+				char x;
+				std::cout << "PC: " << std::hex << int(Emulator.pc) << std::endl;
+				std::cout << "SP: " << std::hex << int(Emulator.sp) << std::endl;
+				std::cout << "AF: " << std::hex << int(Emulator.AF.to16()) << std::endl;
+				std::cout << "BC: " << std::hex << int(Emulator.BC.to16()) << std::endl;
+				std::cout << "DE: " << std::hex << int(Emulator.DE.to16()) << std::endl;
+				std::cout << "HL: " << std::hex << int(Emulator.HL.to16()) << std::endl;
+				std::cout << "Do you wish to countinue debugging?" << std::endl;
+				std::cin >> x;
+				if (x != 'y')
+					debug = false;
+
+			}
 		}
+		
 		
 		Emulator.cycles = 0;
 		ppu.vid.render();
