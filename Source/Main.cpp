@@ -3,7 +3,6 @@
 #include <PPU.h>
 #include <iostream>
 
-// Streak: 2
 int main(int argc, char*args[])
 {
 	bool debug = false;

@@ -148,9 +148,9 @@ void Input::update(Memory* mem) {
 	{
 		inputVal &= buttons;
 	}
-	else {
+	else 
 		return;
-	}
+	
 	mem->write8(0xFF00, inputVal);
 
 }

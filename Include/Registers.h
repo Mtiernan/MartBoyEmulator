@@ -3,7 +3,7 @@
 
 
 #include <stdint.h> 
-//the z80 uses eightbit regiisters A, F, B, C, D, E, H ,L however they are used in pairs
+//the gameboy cpu uses eightbit regiisters A, F, B, C, D, E, H ,L however they are used in pairs
 	struct sixReg {
 		uint8_t high, low;
 		uint16_t to16() {

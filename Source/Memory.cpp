@@ -93,8 +93,8 @@ void Memory::write8(uint16_t address, uint8_t value)
 }
 
 void Memory::write16(uint16_t address, uint16_t value) {
-	//writes the first byte
+	//lower order byte is stored first
 	write8(address, value & 0x00ff);
-	//writes the second byte
+
 	write8(address + 1, ((value & 0xff00) >> 8));
 }

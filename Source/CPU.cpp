@@ -7,7 +7,7 @@ using namespace std;
 //known todos:
 //build a  better debugger
 //-conditional PC increments/cycle count
-//-interrupt handling 
+//-interrupt handling?
 //bugs:
 //-DE wrong at pc 29-33w
 
@@ -196,10 +196,8 @@ void CPU::clearFlags()
 }
 void CPU::call(uint16_t address){
 	sp = sp - 2;
-	//cout << "storing value: " << std::hex << int(pc + 1) << endl;
 	Mem->write16(sp, pc + 1);
 	pc = address;
-	//cout << "calling value: " << std::hex << int(pc) << endl;
 	
 }
 void CPU::And(uint8_t reg){
@@ -221,12 +219,10 @@ void CPU::inc(uint16_t address)
 void CPU::pop(sixReg& reg){
 	reg.low = Mem->read8(sp);
 	reg.high = Mem->read8(sp + 1);
-    //cout << "Poping value: " << std::hex << int(reg.to16())<< endl;
 	sp += 2;
 }
 void CPU::ret() {
 	pc = Mem->read8(sp) | Mem->read8(sp + 1 )<< 8;
-	//cout << "retruning value: " << std::hex << int(pc) << endl;
 	sp += 2;
 }
 void CPU::add(sixReg reg, sixReg reg2) {
@@ -251,13 +247,11 @@ void CPU::add(sixReg reg, sixReg reg2) {
 		reg.high = reg.high + reg.high;
 }
 void CPU::push(sixReg reg) {
-	//cout << "Pushing reg: " << std::hex << int(reg.to16()) << endl;
 	Mem->write8(sp - 1, reg.high);
 	Mem->write8(sp - 2, reg.low);
 	sp -= 2;
 }
 void CPU::push(uint16_t value) {
-	//cout << "Pushing value: " << std::hex << int(value) << endl;
 	Mem->write16(sp - 2, value);
 	sp -= 2;
 }
