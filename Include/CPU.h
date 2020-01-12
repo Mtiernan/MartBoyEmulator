@@ -45,6 +45,7 @@ public:
 	void LDnn(sixReg &reg, uint16_t address);
 	void LDn(uint8_t &reg, uint16_t address);
 	void LDDrn(uint8_t& reg, sixReg& reg2, bool neg);
+	void LDDnr(uint8_t& reg, sixReg& reg2, bool neg);
 	void LDra(uint8_t &reg, uint16_t address);
 	void LDar(uint16_t address, uint8_t value);
 	void incr(sixReg reg);

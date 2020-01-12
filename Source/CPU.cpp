@@ -11,6 +11,7 @@ using namespace std;
 //bugs:
 //-DE wrong at pc 29-33w
 
+
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
 	
@@ -54,7 +55,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x23: incr(HL);
 	case 0x25: decn(HL.high);   break;
 	case 0x28: JRc(flags.zero); break;
-	case 0x2A: LDDrn(AF.high, HL, false); break;
+	case 0x2A: LDDnr(AF.high, HL, false); break;
 	case 0x2C: incn(HL.low); break;
 	case 0x2F: AF.high = ~AF.high; break;
 	case 0x31: sp = Mem->read16(pc++); pc++; break;
@@ -99,18 +100,18 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xE2: LDar(0xff00 + BC.low, AF.high); break;
 	case 0xE5: push(HL); break;
 	case 0xE6: And(Mem->read8(pc++)); break;
-	case 0xEA: LDra(AF.high, Mem->read8(Mem->read16(pc++))); pc++; break;
+	case 0xEA: LDar(Mem->read16(pc++),AF.high); pc++; break;
 	case 0xE9: pc = HL.to16(); break;
 	case 0xEF: push(pc); pc = 0x0028; break;
 	case 0xF0: LDra(AF.high, 0xff00 + Mem->read8(pc++)); break;
 	case 0xF1: pop(AF); break;
+	case 0xF3: IME = false; break;
 	case 0xF5: push(AF); break;
 	case 0xF8: HL.set(sp + int8_t(Mem->read8(pc++))); break;
 	case 0xFA: LDn(AF.high, Mem->read8(pc++) | Mem->read8(pc++) << 8); break;
 	case 0xFB: IME = true; break;
 	case 0xFE: CPn(Mem->read8(pc++)); break;
-	case 0xF3: IME = false; break;
-
+	
 	default:
 		cout << "unimplemented opcode: " << opNames[opcode] << " Number: " << hex << (int)opcode << " " << "PC: " << pc << "\n";
 
@@ -149,12 +150,22 @@ void CPU::LDn(uint8_t &reg, uint16_t address){
 }
 void CPU::LDDrn(uint8_t& reg, sixReg& reg2, bool neg){
 	uint16_t address = reg2.high << 8 | reg2.low;
-	Mem->write8(address, AF.high);
+	Mem->write8(address, reg);
 	if (neg)
 		address--;
 	else
 		address++;
 	reg2.high =  address >> 8;
+	reg2.low = address;
+}
+void CPU::LDDnr(uint8_t& reg, sixReg& reg2, bool neg) {
+	uint16_t address = reg2.high << 8 | reg2.low;
+	reg = Mem->read8(address);
+	if (neg)
+		address--;
+	else
+		address++;
+	reg2.high = address >> 8;
 	reg2.low = address;
 }
 void CPU::JRc(bool flag){
