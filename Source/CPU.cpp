@@ -9,7 +9,7 @@ using namespace std;
 //-conditional PC increments/cycle count
 //-interrupt handling?
 //bugs:
-//-DE wrong at pc 29-33w
+//add function between two registers doesn't carry correctly
 
 
 CPU::CPU(){
@@ -52,7 +52,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x20: JRc(!flags.zero); break;
 	case 0x21: LDnn(HL, pc++); pc++; break;
 	case 0x22: LDDrn(AF.high, HL, false); break;
-	case 0x23: incr(HL);
+	case 0x23: incr(HL); break;
 	case 0x25: decn(HL.high);   break;
 	case 0x28: JRc(flags.zero); break;
 	case 0x2A: LDDnr(AF.high, HL, false); break;
@@ -66,8 +66,8 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x3E: LDn(AF.high, pc++);  break;
 	case 0x47: BC.high = AF.high; break;
 	case 0x4f: BC.low = AF.high; break;
-	case 0x5E: DE.low = Mem->read8(HL.to16());
-	case 0x56: DE.high = Mem->read8(HL.to16());
+	case 0x5E: DE.low = Mem->read8(HL.to16()); break;
+	case 0x56: DE.high = Mem->read8(HL.to16()); break;
 	case 0x5f: DE.low = AF.high; break;
 	case 0x66: LDn(HL.high, HL.high << 8 | HL.low); break;
 	case 0x78: AF.high = BC.high; break;
@@ -236,13 +236,14 @@ void CPU::ret() {
 	pc = Mem->read8(sp) | Mem->read8(sp + 1 )<< 8;
 	sp += 2;
 }
-void CPU::add(sixReg reg, sixReg reg2) {
+void CPU::add(sixReg& reg, sixReg& reg2) {
 	flags.subtract = false;
 	bool carry = false;
-	if (reg.low + reg2.low < reg.low)
+	uint8_t temp = reg.low + reg2.low;
+	if (temp < reg.low)
 		carry = true;
 
-	reg.low = reg.low + reg2.low;
+	reg.low = temp;
 
 	if ((((reg.high & 0xf) + (reg2.high & 0xf)) & 0x10) == 0x10)
 		flags.halfcarry = true;
@@ -253,9 +254,9 @@ void CPU::add(sixReg reg, sixReg reg2) {
 		flags.carry = true;
 
 	if (carry)
-			reg.high = reg.high + reg.high + 1;
+			reg.high = reg.high + reg2.high + 1;
 	else
-		reg.high = reg.high + reg.high;
+		reg.high = reg2.high + reg.high;
 }
 void CPU::push(sixReg reg) {
 	Mem->write8(sp - 1, reg.high);
@@ -266,7 +267,7 @@ void CPU::push(uint16_t value) {
 	Mem->write16(sp - 2, value);
 	sp -= 2;
 }
-void CPU::incr(sixReg reg) {
+void CPU::incr(sixReg& reg) {
 	if (reg.low == 0xff) {
 		reg.low = 0x00;
 		reg.high++;

@@ -35,7 +35,7 @@ public:
 	//opcode functions 
 	void xOR(uint8_t value);
 	void And(uint8_t value);
-	void add(sixReg reg, sixReg reg2);
+	void add(sixReg& reg, sixReg& reg2);
 	void adc(uint8_t value);
 	void incn(uint8_t &reg);
 	void decn(uint8_t &reg);
@@ -48,7 +48,7 @@ public:
 	void LDDnr(uint8_t& reg, sixReg& reg2, bool neg);
 	void LDra(uint8_t &reg, uint16_t address);
 	void LDar(uint16_t address, uint8_t value);
-	void incr(sixReg reg);
+	void incr(sixReg& reg);
 	void JRc(bool flag);
 	void JPc(bool flag);
 	void CPn(uint8_t value);

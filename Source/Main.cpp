@@ -44,7 +44,7 @@ int main(int argc, char*args[])
 		while (Emulator.cycles < MAXCYCLES) {
 			input.update(Emulator.Mem);
 			Emulator.update();
-			if (Emulator.pc == 0x29b)
+			if (Emulator.pc == 0x2fa)
 				debug = true;
 			if (debug) {
 				char x;
