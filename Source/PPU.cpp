@@ -2,7 +2,7 @@
 #include <iostream>
 //TODO:
 //load the LCD/video information
-//
+//support y-loc,x-loc registers
 int Video::int_window() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -28,34 +28,57 @@ void Video::render(){
 	
 }
 
+void  PPU::scanLine() {
+	//need to push line of pixels to framebuffer and inc line pointer
+}
+void PPU::render() {
+	//push entire framebuffer to be rendered through sdl
+}
 void PPU::update() {
 
 	if (LCDenabled) {
+		//switches the current mode and waits a max cycle length before preforming an operation
+		vcycles += 1; // needs to be synced with cpu step
+
 		switch (amode) {
-			case VBLANK:
-				vblank();
-				break;
-			case HBLANK:
-				hblank();
-				break;
-			case OAM:
-				oamMode();
-				break;
 			case VRAM:
-				transfer();
+				if (vcycles >= 172) {
+					scanLine();
+					amode = HBLANK;
+					vcycles = 0;
+				}
+				break;
+
+			case VBLANK:
+				if (vcycles >= 4560) {
+					amode = OAM;
+					cline = 0;
+					render();
+				}
+				break;
+
+			case HBLANK:
+				if (vcycles >= 204)
+				{
+					if(cline == 143)
+					{
+						amode = VBLANK;
+					}
+					else {
+						amode = OAM;
+						cline++;
+					
+					}
+					vcycles = 0;
+				}
+				break;
+
+			case OAM:
+				if(vcycles >= 80){
+					amode = VRAM;
+					vcycles = 0;
+				}
 				break;
 		}
 	}
-}
-void PPU::vblank() {
-
-}
-void PPU::hblank() {
-
-}
-void PPU::transfer() {
-
-}
-void PPU::oamMode() {
-
 }

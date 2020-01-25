@@ -4,13 +4,6 @@
 #include <iostream>
 using namespace std;
 
-//known todos:
-//build a  better debugger
-//-conditional PC increments/cycle count
-//-interrupt handling?
-//bugs:
-//add function between two registers doesn't carry correctly
-
 
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
@@ -91,7 +84,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xCC: if (flags.zero) call(Mem->read16(pc++)); break;
 	case 0xCD: call(Mem->read16(pc++)); break;
 	case 0xCE: adc(AF.high); break;
-	case 0xCF: push(pc); pc = 0x08;
+	case 0xCF: push(pc); pc = 0x08; break;
 	case 0xD1: pop(DE); break;
 	case 0xD5: push(DE); break;
 	case 0xD9: ret(); break;
@@ -122,16 +115,37 @@ void CPU::readOp(uint8_t opcode) {
 		cout << "PC outside of scope";
 	cycles += opcodeCycleCount[opcode];
 }
-void CPU::interrupt(uint16_t value) {
-	push(pc);
-	pc = value;
-
+void CPU::checkINT() {
+	//masks requested intterupts too the enabled intterrupts
+	uint8_t flag = Mem->read8(0xffff) && Mem->read8(0xff0f);
+	//handle intterupt 
+	if (flag) {
+		//v-blank
+		if (flag && 0x01) {
+			call(0x40);
+		}
+		//LCDC STAT
+		else if (flag && 0x02) {
+			call(0x48);
+		}
+		//Timer overflow
+		else if (flag && 0x04) {
+			call(0x50);
+		}
+		//serial
+		else if (flag && 0x08) {
+			call(0x58);
+		}
+		//joypad
+		else if (flag && 0x16) {
+			call(0x60);
+		}
+	}
 }
 void CPU::update(){
-	if (intrpt && IME)
-		interrupt(0x00); //Todo: pass in the interrupt
-	else
-		readOp(Mem->read8(pc));
+	if (IME)
+		checkINT();
+	readOp(Mem->read8(pc));
 
 }
 void CPU::xOR(uint8_t reg){
@@ -184,7 +198,7 @@ void CPU::JPc(bool flag){
 void CPU::LDar(uint16_t address, uint8_t value){
 	Mem->write8(address, value);
 }
-void CPU::LDra(uint8_t& reg,uint16_t address) {
+void CPU::LDra(uint8_t& reg, uint16_t address) {
 	reg = Mem->read8(address);
 }
 void CPU::CPn(uint8_t value)
@@ -352,6 +366,7 @@ void CPU::CBcode(uint8_t code){
 	case 0x07: RLC(AF.high); break;
 	case 0x28: SRA(BC.high); break;
 	case 0x37: swap(AF.high); break;
+	case 0x87: AF.high = AF.high && 0xFE; break;
 	default:
 		cout << "unimp CB code: " << hex << int(code) << "\n";
 		cout << "pc " << hex << int(pc) << " " << int(Mem->read8(pc));

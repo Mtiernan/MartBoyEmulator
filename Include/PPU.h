@@ -10,6 +10,7 @@
 enum mode{
 	HBLANK,
 	VBLANK,
+	SCANL,
 	OAM,
 	VRAM
 };
@@ -36,7 +37,7 @@ class PPU{
 	public:
 
 	Video vid;
-
+	Memory* Mem;
 	//status managment
 	int vcycles, cline;
 	mode amode;
@@ -49,11 +50,6 @@ class PPU{
 
 	void update();
 	
-	void oamMode();
-	void hblank();
-	void vblank();
-	void transfer();
-
 };
 
 

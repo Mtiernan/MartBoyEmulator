@@ -3,6 +3,15 @@
 #include <PPU.h>
 #include <iostream>
 
+
+//known todos:
+//build a  better debugger
+//-conditional PC increments/cycle count
+//-interrupt requesting
+//set up gpu timings
+//bugs:
+//add function between two registers doesn't carry correctly
+
 int main(int argc, char*args[])
 {
 	bool debug = false;
@@ -22,6 +31,8 @@ int main(int argc, char*args[])
 	Emulator.HL.high = 0x01;
 	Emulator.Mem->write8(0xff44, 0x94);
 	Emulator.Mem->write8(0xff00, 0xCF);
+	Emulator.Mem->write8(0xfffe, 0xc3);
+	Emulator.Mem->write8(0xffff, 0x09);
 	Emulator.sp = 0xFFFE;
  
 	//intializing window through SDL
@@ -29,7 +40,6 @@ int main(int argc, char*args[])
 
 	//main loop
 	while (!quit) {
-
 		
 		if (SDL_PollEvent(&event))
 			if (event.type == SDL_WINDOWEVENT) {
@@ -43,8 +53,9 @@ int main(int argc, char*args[])
 
 		while (Emulator.cycles < MAXCYCLES) {
 			input.update(Emulator.Mem);
+
 			Emulator.update();
-			if (Emulator.pc == 0x2fa)
+			if (Emulator.pc == 0x2820)
 				debug = true;
 			if (debug) {
 				char x;
@@ -58,11 +69,8 @@ int main(int argc, char*args[])
 				std::cin >> x;
 				if (x != 'y')
 					debug = false;
-
 			}
-		}
-		
-		
+		}			
 		Emulator.cycles = 0;
 		ppu.vid.render();
 	}

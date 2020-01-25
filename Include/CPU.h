@@ -29,7 +29,7 @@ public:
 	//cpu state handling functions
 	void clearFlags();
 	void readOp(uint8_t opcode);
-	void interrupt(uint16_t value);
+	void checkINT();
 	void update();
 
 	//opcode functions 
