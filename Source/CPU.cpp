@@ -35,6 +35,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x0C: incn(BC.low); break;
 	case 0x0E: LDn(BC.low, pc++); break;
 	case 0x11: LDnn(DE, pc++); pc++; break;
+	case 0x12: LDra(AF.high, DE.to16()); break;
 	case 0x13: incr(DE); break;
 	case 0x16: LDn(DE.high, pc++); break;
 	case 0x18: JRc(true); break;
@@ -65,6 +66,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x66: LDn(HL.high, HL.high << 8 | HL.low); break;
 	case 0x78: AF.high = BC.high; break;
 	case 0x79: AF.high = BC.low; break;
+	case 0x7c: AF.high = HL.high; break;
 	case 0x7E: LDra(AF.high, HL.to16()); break;
 	case 0x87: AF.high += AF.high; break;
 	case 0xA1: And(BC.low); break;

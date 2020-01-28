@@ -8,7 +8,8 @@
 //build a  better debugger
 //-conditional PC increments/cycle count
 //-interrupt requesting
-//set up gpu timings
+//track cpu timing to pass to cpu
+//runs till 27cf+ hasn't been checked for bugs
 //bugs:
 //add function between two registers doesn't carry correctly
 
@@ -20,16 +21,16 @@ int main(int argc, char*args[])
 	CPU Emulator;
 	PPU ppu;
 	Input input =  Input(Emulator.Mem, &Emulator);
+	ppu.Mem = Emulator.Mem;
 	Emulator.Mem->loadRom();
 
-	//intializing of values to skip boot rom
+	//intializing of values for intial testing can be deleted later
 	Emulator.pc = 0x150;
 	Emulator.AF.high = 0x01;
 	Emulator.BC.low = 0x13;
 	Emulator.DE.low =0xD8;
 	Emulator.HL.low = 0x4d;
 	Emulator.HL.high = 0x01;
-	Emulator.Mem->write8(0xff44, 0x94);
 	Emulator.Mem->write8(0xff00, 0xCF);
 	Emulator.Mem->write8(0xfffe, 0xc3);
 	Emulator.Mem->write8(0xffff, 0x09);
@@ -55,7 +56,9 @@ int main(int argc, char*args[])
 			input.update(Emulator.Mem);
 
 			Emulator.update();
-			if (Emulator.pc == 0x2820)
+			ppu.update();
+
+			if (Emulator.pc == 0x2cd)
 				debug = true;
 			if (debug) {
 				char x;
@@ -66,6 +69,7 @@ int main(int argc, char*args[])
 				std::cout << "DE: " << std::hex << int(Emulator.DE.to16()) << std::endl;
 				std::cout << "HL: " << std::hex << int(Emulator.HL.to16()) << std::endl;
 				std::cout << "Do you wish to countinue debugging?" << std::endl;
+				std::cout << "Line " << std::hex << int( Emulator.Mem->read8(0xff44)) << std::endl;
 				std::cin >> x;
 				if (x != 'y')
 					debug = false;

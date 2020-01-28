@@ -34,12 +34,13 @@ private:
 
 class PPU{
 
-	public:
-
+public:
+	PPU();
 	Video vid;
 	Memory* Mem;
 	//status managment
-	int vcycles, cline;
+	int vcycles;
+	uint8_t cline;
 	mode amode;
 	bool LCDenabled;
 	uint8_t status;

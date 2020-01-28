@@ -1,8 +1,9 @@
 #include "PPU.h"
 #include <iostream>
 //TODO:
-//load the LCD/video information
-//support y-loc,x-loc registers
+//currently only updates current line, get/set other lcd registers
+//
+
 int Video::int_window() {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		std::cout << "SDL_Init Error: " << SDL_GetError() << std::endl;
@@ -27,6 +28,16 @@ void Video::render(){
 	SDL_RenderPresent(ren);
 	
 }
+PPU::PPU(){
+	cline = 0x0;
+	scrX = 0x0;
+	scrY = 0x0;
+	amode = OAM;
+	Mem = NULL;
+	LCDenabled = false;
+	vcycles = 0;
+
+}
 
 void  PPU::scanLine() {
 	//need to push line of pixels to framebuffer and inc line pointer
@@ -35,6 +46,8 @@ void PPU::render() {
 	//push entire framebuffer to be rendered through sdl
 }
 void PPU::update() {
+
+	LCDenabled = true;
 
 	if (LCDenabled) {
 		//switches the current mode and waits a max cycle length before preforming an operation
@@ -50,23 +63,33 @@ void PPU::update() {
 				break;
 
 			case VBLANK:
-				if (vcycles >= 4560) {
+				if (cline == 153){
 					amode = OAM;
 					cline = 0;
 					render();
+					vcycles = 0;
+				}
+				else if (vcycles >= 456) {
+					cline++;
+					Mem->write8(0xff44, cline);
+					vcycles = 0;
 				}
 				break;
 
 			case HBLANK:
 				if (vcycles >= 204)
 				{
-					if(cline == 143)
+					if(cline == 144)
 					{
 						amode = VBLANK;
+						cline++;
+						Mem->write8(0xff44, cline);
 					}
 					else {
 						amode = OAM;
 						cline++;
+						Mem->write8(0xff44, cline);
+
 					
 					}
 					vcycles = 0;
