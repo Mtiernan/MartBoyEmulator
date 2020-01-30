@@ -9,7 +9,6 @@
 //-conditional PC increments/cycle count
 //-interrupt requesting
 //track cpu timing to pass to cpu
-//runs till 27cf+ hasn't been checked for bugs
 //bugs:
 //add function between two registers doesn't carry correctly
 
@@ -35,6 +34,7 @@ int main(int argc, char*args[])
 	Emulator.Mem->write8(0xfffe, 0xc3);
 	Emulator.Mem->write8(0xffff, 0x09);
 	Emulator.sp = 0xFFFE;
+	std::cout << "control " << std::hex << int(Emulator.Mem->read8(0xff00)) << std::endl;
  
 	//intializing window through SDL
 	ppu.vid.int_window();
@@ -58,7 +58,7 @@ int main(int argc, char*args[])
 			Emulator.update();
 			ppu.update();
 
-			if (Emulator.pc == 0x2cd)
+			if (Emulator.pc == 0xffff)
 				debug = true;
 			if (debug) {
 				char x;
@@ -69,7 +69,7 @@ int main(int argc, char*args[])
 				std::cout << "DE: " << std::hex << int(Emulator.DE.to16()) << std::endl;
 				std::cout << "HL: " << std::hex << int(Emulator.HL.to16()) << std::endl;
 				std::cout << "Do you wish to countinue debugging?" << std::endl;
-				std::cout << "Line " << std::hex << int( Emulator.Mem->read8(0xff44)) << std::endl;
+				std::cout << "control " << std::hex << int( Emulator.Mem->read8(0xff00)) << std::endl;
 				std::cin >> x;
 				if (x != 'y')
 					debug = false;

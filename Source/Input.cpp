@@ -69,12 +69,12 @@ Input::Input(Memory* memory, CPU* emu)
 {
 	mem = memory;
 	cpu = emu;
-	directions = 0xf;
-	buttons = 0xf;
+	directions = 0xff;
+	buttons = 0xff;
 }
 
 void Input::reset(){ 
-	mem->write8(0xff00, 0xff);
+	mem->write8(0xff00, 0xcf);
 }
 
 void Input::buttonPress(button butt, bool held){
@@ -138,14 +138,16 @@ void Input::update(Memory* mem) {
 	uint8_t inputVal = mem->read8(0xFF00);
 	
 	//dpad
-	if (inputVal ^ 0x10)
+	if (inputVal & 0x10)
 	{
+		inputVal = 0xdf;
 		inputVal &= directions;
 	}
 
 	//buttons
-	else if (inputVal ^ 0x20)
+	else if (inputVal & 0x20)
 	{
+		inputVal = 0xef;
 		inputVal &= buttons;
 	}
 	else 

@@ -24,7 +24,7 @@ void CPU::readOp(uint8_t opcode) {
 	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
 	pc++;
 	switch (opcode) {
-	case 0x00:  break;
+	case 0x00: break;
 	case 0x01: LDnn(BC, pc++); pc++;  break;
 	case 0x05: decn(BC.high); break;
 	case 0x06: LDn(BC.high, pc++); break;
