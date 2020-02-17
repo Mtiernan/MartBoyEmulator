@@ -2,6 +2,7 @@
 #include <iostream>
 //TODO:
 //currently only updates current line, get/set other lcd registers
+//set lcy and interrupt handlers
 //
 
 int Video::int_window() {
@@ -63,13 +64,15 @@ void PPU::update() {
 				break;
 
 			case VBLANK:
+
 				if (cline == 153){
 					amode = OAM;
 					cline = 0;
-					render();
 					vcycles = 0;
+					render();
 				}
 				else if (vcycles >= 456) {
+					//cline still needs to be updated, some games check this value to see if it is in vblanking period
 					cline++;
 					Mem->write8(0xff44, cline);
 					vcycles = 0;
@@ -84,6 +87,9 @@ void PPU::update() {
 						amode = VBLANK;
 						cline++;
 						Mem->write8(0xff44, cline);
+
+						//triggers v-blank interrupt
+						Mem->write8(0xff0f, Mem->read8(0xff0f) | 0x01);
 					}
 					else {
 						amode = OAM;

@@ -7,7 +7,7 @@
 //known todos:
 //build a  better debugger
 //-conditional PC increments/cycle count
-//-interrupt requesting
+//-interrupt requesting not working?
 //track cpu timing to pass to cpu
 //bugs:
 //add function between two registers doesn't carry correctly
@@ -58,7 +58,7 @@ int main(int argc, char*args[])
 			Emulator.update();
 			ppu.update();
 
-			if (Emulator.pc == 0xffff)
+			if (Emulator.pc == 0x40)
 				debug = true;
 			if (debug) {
 				char x;

@@ -20,7 +20,6 @@ void StartCpu(){
 		
 };
 void CPU::readOp(uint8_t opcode) {
-
 	//cout << "Calling opcode: " << std::hex << int(opcode) << " \tPC: " << pc << endl;
 	pc++;
 	switch (opcode) {
@@ -55,8 +54,10 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x31: sp = Mem->read16(pc++); pc++; break;
 	case 0x32: LDDrn(AF.high, HL, true);  break;
 	case 0x34: incr(HL); break;
+	case 0x35: Mem->write8(HL.to16(), Mem->read8(HL.to16()) - 1); break;
 	case 0x36: Mem->write8(HL.to16(), Mem->read8(pc++)); break;
 	case 0x3C: incn(AF.high); break;
+	case 0x3D: decn(AF.high); break;
 	case 0x3E: LDn(AF.high, pc++);  break;
 	case 0x47: BC.high = AF.high; break;
 	case 0x4f: BC.low = AF.high; break;
@@ -113,33 +114,43 @@ void CPU::readOp(uint8_t opcode) {
 		exit(0);
 	}
 
-	if (pc > 0x8000)
+	if (pc > 0xffff)
 		cout << "PC outside of scope";
 	cycles += opcodeCycleCount[opcode];
 }
 void CPU::checkINT() {
 	//masks requested intterupts too the enabled intterrupts
-	uint8_t flag = Mem->read8(0xffff) && Mem->read8(0xff0f);
+	uint8_t flag = Mem->read8(0xffff) & Mem->read8(0xff0f);
 	//handle intterupt 
 	if (flag) {
 		//v-blank
-		if (flag && 0x01) {
+		if (flag & 0x01) {
+			Mem->write8(0xff0f, Mem->read8(0xff0f) & ~(0x01));
+			pc -= 1;
 			call(0x40);
 		}
 		//LCDC STAT
-		else if (flag && 0x02) {
+		else if (flag & 0x02) {
+			Mem->write8(0xff0f, Mem->read8(0xff0f) & ~(0x02));
+			pc -= 1;
 			call(0x48);
 		}
 		//Timer overflow
-		else if (flag && 0x04) {
+		else if (flag & 0x04) {
+			Mem->write8(0xff0f, Mem->read8(0xff0f) & ~(0x04));
+			pc -= 1;
 			call(0x50);
 		}
 		//serial
-		else if (flag && 0x08) {
+		else if (flag & 0x08) {
+			Mem->write8(0xff0f, Mem->read8(0xff0f) & ~(0x08));
+			pc -= 1;
 			call(0x58);
 		}
 		//joypad
-		else if (flag && 0x16) {
+		else if (flag & 0x10) {
+			Mem->write8(0xff0f, Mem->read8(0xff0f) & ~(0x10));
+			pc -= 1;
 			call(0x60);
 		}
 	}

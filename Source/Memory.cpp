@@ -51,10 +51,10 @@ uint8_t Memory::read8(uint16_t address) {
 	else if (0xfdff < address && address <= 0xFE9F)
 		return oam[address - 0xfe00];
 
-	else if (0xFF00 <= address &&  address <0xFF80) 
+	else if (0xFF00 <= address &&  address < 0xFF80) 
 		return ioreg[address - 0xff00];
 
-	else if (0xff79 < address && address <= 0xfffe)
+	else if (0xff79 < address && address <= 0xffff)
 		return hram[address - 0xff80];
 
 
@@ -88,7 +88,7 @@ void Memory::write8(uint16_t address, uint8_t value)
 	else if (0xFF00 <= address && address < 0xFF80)
 		 ioreg[address - 0xff00] = value;
 
-	else if (0xff79 < address && address <= 0xfffe)
+	else if (0xff79 < address && address <= 0xffff)
 		hram[address - 0xff80] = value;
 }
 
