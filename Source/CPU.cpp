@@ -25,50 +25,79 @@ void CPU::readOp(uint8_t opcode) {
 	switch (opcode) {
 	case 0x00: break;
 	case 0x01: LDnn(BC, pc++); pc++;  break;
+	case 0x02: LDar(BC.to16(), AF.high); break;
+	case 0x03: BC.inc(); break;
+	case 0x04: incn(BC.high); break;
 	case 0x05: decn(BC.high); break;
 	case 0x06: LDn(BC.high, pc++); break;
 	case 0x07: RLCr(AF.high); break;
 	case 0x08: Mem->write16(Mem->read16(pc++), sp); pc++; break;
+	case 0x09: add(HL, BC); break;
+	case 0x0A: LDn(AF.high, BC.to16()); break;
 	case 0x0B: decnn(BC); break;
-	case 0x0D: decn(BC.low); break;
 	case 0x0C: incn(BC.low); break;
+	case 0x0D: decn(BC.low); break;
 	case 0x0E: LDn(BC.low, pc++); break;
+	//case 0x0F: RCCA(); break;
+	//case 0x10: stop(); break;
 	case 0x11: LDnn(DE, pc++); pc++; break;
 	case 0x12: LDra(AF.high, DE.to16()); break;
 	case 0x13: incr(DE); break;
+	case 0x14: DE.high++; break;
+	case 0x15: DE.high--; break;
 	case 0x16: LDn(DE.high, pc++); break;
+	//case 0x17: RLA(); break;
 	case 0x18: JRc(true); break;
 	case 0x19: add(HL, DE); break;
 	case 0x1A: LDn(AF.high, DE.high << 8 | DE.low); break;
+	case 0x1B: DE.dec(); break;
 	case 0x1C: incn(DE.low); break;
 	case 0x1D: decn(DE.low); break;
+	case 0x1E: DE.low = Mem->read8(pc++); break;
+	//case 0x1F: RRA(); break;
 	case 0x20: JRc(!flags.zero); break;
 	case 0x21: LDnn(HL, pc++); pc++; break;
 	case 0x22: LDDrn(AF.high, HL, false); break;
 	case 0x23: incr(HL); break;
+	case 0x24: incn(HL.high); break;
 	case 0x25: decn(HL.high);   break;
+	case 0x26: HL.high = Mem->read8(pc++); break;
+	//case 0x27: DAA(); break;
 	case 0x28: JRc(flags.zero); break;
+	case 0x29: add(HL, HL); break;
 	case 0x2A: LDDnr(AF.high, HL, false); break;
+	case 0x2B: HL.dec(); break;
 	case 0x2C: incn(HL.low); break;
+	case 0x2D: HL.low--; break;
+	case 0x2E: HL.low = Mem->read8(pc++); break;
 	case 0x2F: AF.high = ~AF.high; break;
 	case 0x31: sp = Mem->read16(pc++); pc++; break;
 	case 0x32: LDDrn(AF.high, HL, true);  break;
 	case 0x34: incr(HL); break;
 	case 0x35: Mem->write8(HL.to16(), Mem->read8(HL.to16()) - 1); break;
 	case 0x36: Mem->write8(HL.to16(), Mem->read8(pc++)); break;
+	case 0x3a: AF.high = Mem->read8(HL.to16()); HL.dec(); break;
 	case 0x3C: incn(AF.high); break;
 	case 0x3D: decn(AF.high); break;
 	case 0x3E: LDn(AF.high, pc++);  break;
+	case 0x46: LDra(BC.high, HL.to16()); break;
 	case 0x47: BC.high = AF.high; break;
+	case 0x4E: LDra(BC.low, HL.to16()); break;
 	case 0x4f: BC.low = AF.high; break;
 	case 0x5E: DE.low = Mem->read8(HL.to16()); break;
 	case 0x56: DE.high = Mem->read8(HL.to16()); break;
 	case 0x5f: DE.low = AF.high; break;
-	case 0x66: LDn(HL.high, HL.high << 8 | HL.low); break;
+	case 0x60: HL.high = BC.high; break;
+	case 0x66: LDn(HL.high, HL.to16()); break;
+	case 0x69: LDn(HL.low, HL.to16()); break;
+	case 0x6b: HL.low = DE.low; break;
+	case 0x6f: HL.low = AF.high; break; 
+	case 0x77: Mem->write8(HL.to16(), AF.high); break;
 	case 0x78: AF.high = BC.high; break;
 	case 0x79: AF.high = BC.low; break;
 	case 0x7c: AF.high = HL.high; break;
 	case 0x7E: LDra(AF.high, HL.to16()); break;
+	case 0x85: AF.high = AF.high + HL.low;  break;
 	case 0x87: AF.high += AF.high; break;
 	case 0xA1: And(BC.low); break;
 	case 0xA7: And(AF.high); break;
@@ -78,7 +107,9 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xB1: Or(BC.low); break;
 	case 0xC0: if (!flags.zero) ret(); break;
 	case 0xC1: pop(BC); break;
+	case 0xC2: JPc(!flags.zero); break;
 	case 0xC3: pc = Mem->read16(pc++); break;
+	case 0xC4: if (!flags.zero) call(Mem->read16(pc)); pc += 2; break;
 	case 0xC5: push(BC); break;
 	case 0xC8: if (flags.zero) ret(); break;
 	case 0xC9: ret(); break;
@@ -91,6 +122,7 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xD1: pop(DE); break;
 	case 0xD5: push(DE); break;
 	case 0xD9: ret(); break;
+	case 0xDF: call(0x0018); break;
 	case 0xE0: LDar(0xff00 + Mem->read8(pc++), AF.high); break;
 	case 0xE1: pop(HL); break;
 	case 0xE2: LDar(0xff00 + BC.low, AF.high); break;
@@ -107,11 +139,12 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xFA: LDn(AF.high, Mem->read8(pc++) | Mem->read8(pc++) << 8); break;
 	case 0xFB: IME = true; break;
 	case 0xFE: CPn(Mem->read8(pc++)); break;
+	case 0xFF: call(0x0038); break;
 	
 	default:
 		cout << "unimplemented opcode: " << opNames[opcode] << " Number: " << hex << (int)opcode << " " << "PC: " << pc << "\n";
 
-		exit(0);
+		quit = true;
 	}
 
 	if (pc > 0xffff)
@@ -373,16 +406,27 @@ void CPU::SRA(uint8_t& reg)
 		flags.zero = 0;
 
 }
+void CPU::SLA(uint8_t& reg)
+{
+	flags.carry = 0x80 & reg;
+	reg = reg << 1;
+	reg &= 0xFE;
+	if (reg == 0)
+		flags.zero = 0;
+
+}
 void CPU::CBcode(uint8_t code){
 	pc++;
 	switch (code) {
 	case 0x07: RLC(AF.high); break;
+	case 0x27: SLA(AF.high); break;
 	case 0x28: SRA(BC.high); break;
 	case 0x37: swap(AF.high); break;
+	case 0x77: SLA(AF.high); break;
 	case 0x87: AF.high = AF.high && 0xFE; break;
 	default:
 		cout << "unimp CB code: " << hex << int(code) << "\n";
 		cout << "pc " << hex << int(pc) << " " << int(Mem->read8(pc));
-		exit(0);
+		quit = true;
 	}
 }

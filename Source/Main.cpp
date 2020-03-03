@@ -40,28 +40,30 @@ int main(int argc, char*args[])
 	ppu.vid.int_window();
 
 	//main loop
-	while (!quit) {
+	while (!Emulator.quit) {
 		
 		if (SDL_PollEvent(&event))
 			if (event.type == SDL_WINDOWEVENT) {
 				if (event.window.event == SDL_WINDOWEVENT_CLOSE)
 					quit = true;
 			}
-			else if (event.type == SDL_KEYDOWN)
-				input.getKeyDown(event);
+ 			else if (event.type == SDL_KEYDOWN)
+   				input.getKeyDown(event);
 			else if (event.type == SDL_KEYUP)
 				input.getKeyUp(event);
+		int prevC = 0;
+		while (Emulator.cycles < MAXCYCLES && !Emulator.quit) {
 
-		while (Emulator.cycles < MAXCYCLES) {
 			input.update(Emulator.Mem);
-
+			prevC = Emulator.cycles;
 			Emulator.update();
 			ppu.update();
 
-			if (Emulator.pc == 0x40)
+			if (Emulator.pc == 0x2F2)
 				debug = true;
 			if (debug) {
 				char x;
+				ppu.vid.render(ppu.background);
 				std::cout << "PC: " << std::hex << int(Emulator.pc) << std::endl;
 				std::cout << "SP: " << std::hex << int(Emulator.sp) << std::endl;
 				std::cout << "AF: " << std::hex << int(Emulator.AF.to16()) << std::endl;
@@ -76,8 +78,9 @@ int main(int argc, char*args[])
 			}
 		}			
 		Emulator.cycles = 0;
-		ppu.vid.render();
+	ppu.getBackground();
 	}
-	return 0;
+	ppu.vid.render(ppu.background);
+  	return 0;
 
 }

@@ -14,6 +14,12 @@
 			high = value >> 8;
 			low = value;
 		}
+		void inc() {
+			set(to16() + 1);
+		}
+		void dec() {
+			set(to16() - 1);
+		}
 	};
 
 

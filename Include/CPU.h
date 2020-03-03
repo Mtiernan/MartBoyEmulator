@@ -25,7 +25,7 @@ public:
 	bool IME;
 	int cycles;
 	CPU();
-
+	bool quit;
 	//cpu state handling functions
 	void clearFlags();
 	void readOp(uint8_t opcode);
@@ -66,6 +66,7 @@ public:
 	void RLC(uint8_t& reg);
 	void swap(uint8_t& reg);
 	void SRA(uint8_t& reg);
+	void SLA(uint8_t& reg);
 };
 
 
