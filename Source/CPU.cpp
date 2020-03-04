@@ -4,7 +4,7 @@
 #include <iostream>
 using namespace std;
 
-
+//todo implement SUBn function
 CPU::CPU(){
 	const int MAXCYCLES = 69905;
 	
@@ -43,8 +43,8 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x11: LDnn(DE, pc++); pc++; break;
 	case 0x12: LDra(AF.high, DE.to16()); break;
 	case 0x13: incr(DE); break;
-	case 0x14: DE.high++; break;
-	case 0x15: DE.high--; break;
+	case 0x14: incn(DE.high); break;
+	case 0x15: decn(DE.high); break;
 	case 0x16: LDn(DE.high, pc++); break;
 	//case 0x17: RLA(); break;
 	case 0x18: JRc(true); break;
@@ -68,49 +68,161 @@ void CPU::readOp(uint8_t opcode) {
 	case 0x2A: LDDnr(AF.high, HL, false); break;
 	case 0x2B: HL.dec(); break;
 	case 0x2C: incn(HL.low); break;
-	case 0x2D: HL.low--; break;
+	case 0x2D: decn(HL.low); break;
 	case 0x2E: HL.low = Mem->read8(pc++); break;
 	case 0x2F: AF.high = ~AF.high; break;
+	case 0x30: JRc(!flags.carry); break;
 	case 0x31: sp = Mem->read16(pc++); pc++; break;
 	case 0x32: LDDrn(AF.high, HL, true);  break;
+	case 0x33: sp++; break;
 	case 0x34: incr(HL); break;
 	case 0x35: Mem->write8(HL.to16(), Mem->read8(HL.to16()) - 1); break;
 	case 0x36: Mem->write8(HL.to16(), Mem->read8(pc++)); break;
-	case 0x3a: AF.high = Mem->read8(HL.to16()); HL.dec(); break;
+	//case 0x37: SCF(); break;
+	case 0x38: JRc(flags.carry); break;
+	case 0x39: HL.set(HL.to16() + sp); break;
+	case 0x3A: LDDnr(AF.high, HL, true); break;
+	case 0x3B: sp--; break;
 	case 0x3C: incn(AF.high); break;
 	case 0x3D: decn(AF.high); break;
-	case 0x3E: LDn(AF.high, pc++);  break;
+	case 0x3E: LDn( AF.high, pc++);  break;
+	//case 0x3f: CCF(); break;
+	case 0x40: BC.high = BC.high; break;
+	case 0x41: BC.high = BC.low; break;
+	case 0x42: BC.high = DE.high; break;
+	case 0x43: BC.high = DE.low; break;
+	case 0x44: BC.high = HL.high; break;
+	case 0x45: BC.high = HL.low; break;
 	case 0x46: LDra(BC.high, HL.to16()); break;
 	case 0x47: BC.high = AF.high; break;
+	case 0x48: BC.low = BC.high; break;
+	case 0x49: BC.low = BC.low; break;
+	case 0x4A: BC.low = DE.high; break;
+	case 0x4B: BC.low = DE.low; break;
+	case 0x4C: BC.low = HL.high; break;
+	case 0x4D: BC.low = HL.low; break;
 	case 0x4E: LDra(BC.low, HL.to16()); break;
 	case 0x4f: BC.low = AF.high; break;
+	case 0x50: DE.high = BC.high; break;
+	case 0x51: DE.high = BC.low; break;
+	case 0x52: DE.high = DE.high; break;
+	case 0x53: DE.high = DE.low; break;
+	case 0x54: DE.high = HL.high;  break;
+	case 0x55: DE.high = HL.low; break;
+	case 0x56: LDra(DE.high, HL.to16()); break;
+	case 0x57: DE.high = AF.high; break;
+	case 0x58: DE.low = BC.high; break;
+	case 0x59: DE.low = BC.low; break;
+	case 0x5A: DE.low = DE.high; break;
+	case 0x5B: DE.low = DE.low; break;
+	case 0x5C: DE.low = HL.high; break;
+	case 0x5D: DE.low = HL.low; break;
 	case 0x5E: DE.low = Mem->read8(HL.to16()); break;
-	case 0x56: DE.high = Mem->read8(HL.to16()); break;
 	case 0x5f: DE.low = AF.high; break;
 	case 0x60: HL.high = BC.high; break;
+	case 0x61: HL.high = BC.low; break;
+	case 0x62: HL.high = DE.high; break;
+	case 0x63: HL.high = DE.low; break;
+	case 0x64: HL.high = HL.high; break;
+	case 0x65: HL.high = HL.low; break;
 	case 0x66: LDn(HL.high, HL.to16()); break;
-	case 0x69: LDn(HL.low, HL.to16()); break;
-	case 0x6b: HL.low = DE.low; break;
-	case 0x6f: HL.low = AF.high; break; 
-	case 0x77: Mem->write8(HL.to16(), AF.high); break;
+	case 0x67: HL.high = AF.high; break;
+	case 0x68: HL.low = BC.high; break;
+	case 0x69: HL.low = BC.low; break;
+	case 0x6A: HL.low = DE.high; break;
+	case 0x6B: HL.low = DE.low; break;
+	case 0x6C: HL.low = HL.high; break;
+	case 0x6D: HL.low = HL.low; break;
+	case 0x6E: LDn(HL.low, HL.to16()); break;
+	case 0x6F: HL.low = AF.high; break; 
+	case 0x70: LDar(HL.to16(), BC.high); break;
+	case 0x71: LDar(HL.to16(), BC.low); break;
+	case 0x72: LDar(HL.to16(), DE.high); break;
+	case 0x73: LDar(HL.to16(), DE.low); break;
+	case 0x74: LDar(HL.to16(), HL.high); break;
+	case 0x75: LDar(HL.to16(), HL.low); break;
+	//case 0x76: halt(); break;
+	case 0x77: LDar(HL.to16(), AF.high); break;
 	case 0x78: AF.high = BC.high; break;
 	case 0x79: AF.high = BC.low; break;
-	case 0x7c: AF.high = HL.high; break;
+	case 0x7A: AF.high = DE.high; break;
+	case 0x7B: AF.high = DE.low; break;
+	case 0x7C: AF.high = HL.high; break;
+	case 0x7D: AF.high = HL.low; break;
 	case 0x7E: LDra(AF.high, HL.to16()); break;
-	case 0x85: AF.high = AF.high + HL.low;  break;
-	case 0x87: AF.high += AF.high; break;
+	case 0x7F: AF.high = AF.high; break;
+	case 0x80: addn(BC.high); break;
+	case 0x81: addn(BC.low); break;
+	case 0x82: addn(DE.high); break;
+	case 0x83: addn(DE.low); break;
+	case 0x84: addn(HL.high); break;
+	case 0x85: addn(HL.low); break;
+	case 0x86: addn(Mem->read8(HL.to16())); break;
+	case 0x87: addn(AF.high); break;
+	case 0x88: adc(BC.high); break;
+	case 0x89: adc(BC.low); break;
+	case 0x8A: adc(DE.high); break;
+	case 0x8B: adc(DE.low); break;
+	case 0x8C: adc(HL.high); break;
+	case 0x8D: adc(HL.low); break;
+	case 0x8E: adc(Mem->read8(HL.to16())); break;
+	case 0x8F: adc(AF.high); break;
+	case 0x90: sub(BC.high); break;
+	case 0x91: sub(BC.low); break;
+	case 0x92: sub(DE.high); break;
+	case 0x93: sub(DE.low); break;
+	case 0x94: sub(HL.high); break;
+	case 0x95: sub(HL.low); break;
+	case 0x96: sub(Mem->read8(HL.to16())); break;
+	case 0x97: sub(AF.high); break;
+	case 0x98: sbc(BC.high); break;
+	case 0x99: sbc(BC.low); break;
+	case 0x9A: sbc(DE.high); break;
+	case 0x9B: sbc(DE.low); break;
+	case 0x9C: sbc(HL.high); break;
+	case 0x9D: sbc(HL.low); break;
+	case 0x9E: sbc(Mem->read8(HL.to16())); break;
+	case 0x9F: sbc(AF.high); break;
+	case 0xA0: And(BC.high); break;
 	case 0xA1: And(BC.low); break;
+	case 0xA2: And(DE.high); break;
+	case 0xA3: And(DE.low); break;
+	case 0xA4: And(HL.high); break;
+	case 0xA5: And(HL.low); break;
+	case 0xA6: And(Mem->read8(HL.to16())); break;
 	case 0xA7: And(AF.high); break;
+	case 0xA8: xOR(BC.high); break;
 	case 0xA9: xOR(BC.low); break;
-	case 0xAf: xOR(AF.high); break;
+	case 0xAA: xOR(DE.high); break;
+	case 0xAB: xOR(DE.low); break;
+	case 0xAC: xOR(HL.high); break;
+	case 0xAD: xOR(HL.low); break;
+	case 0xAE: xOR(Mem->read8(HL.to16())); break;
+	case 0xAF: xOR(AF.high); break;
 	case 0xB0: Or(BC.high); break;
 	case 0xB1: Or(BC.low); break;
+	case 0xB2: Or(DE.high); break;
+	case 0xB3: Or(DE.low); break;
+	case 0xB4: Or(HL.high); break;
+	case 0xB5: Or(HL.low); break;
+	case 0xB6: Or(Mem->read8(HL.to16())); break;
+	case 0xB7: Or(AF.high); break;
+	case 0xB8: CPn(BC.high); break;
+	case 0xB9: CPn(BC.low); break;
+	case 0xBA: CPn(DE.high); break;
+	case 0xBB: CPn(DE.low); break;
+	case 0xBC: CPn(HL.high); break;
+	case 0xBD: CPn(HL.low); break;
+	case 0xBE: CPn(Mem->read8(HL.to16())); break;
+	case 0xBF: CPn(AF.high); break;
 	case 0xC0: if (!flags.zero) ret(); break;
 	case 0xC1: pop(BC); break;
 	case 0xC2: JPc(!flags.zero); break;
 	case 0xC3: pc = Mem->read16(pc++); break;
 	case 0xC4: if (!flags.zero) call(Mem->read16(pc)); pc += 2; break;
 	case 0xC5: push(BC); break;
+	case 0xC6: addn(Mem->read8(pc++)); break;
+	case 0xC7: call(0x00); break;
 	case 0xC8: if (flags.zero) ret(); break;
 	case 0xC9: ret(); break;
 	case 0xCA: JPc(flags.zero); break;
@@ -119,9 +231,20 @@ void CPU::readOp(uint8_t opcode) {
 	case 0xCD: call(Mem->read16(pc++)); break;
 	case 0xCE: adc(AF.high); break;
 	case 0xCF: push(pc); pc = 0x08; break;
+	case 0xD0: if (!flags.zero); ret(); break;
 	case 0xD1: pop(DE); break;
+	case 0xD2: JPc(!flags.carry); break;
+	//case 0xd3: break;
+	case 0xD4: if(!flags.carry) call(Mem->read16(pc++)); pc++; break; 
 	case 0xD5: push(DE); break;
-	case 0xD9: ret(); break;
+	case 0xD6: sub(Mem->read8(pc++)); break;
+	case 0xD7: call(0x0010); break;
+	case 0xD8: if (flags.carry) ret(); break;
+	case 0xD9: ret(); break; //doesn't reset interrupt flag
+	case 0xDA: JPc(flags.carry); break;
+	//case 0xDB: break;
+	case 0xDC: if (flags.carry) call(Mem->read16(pc++)); break;
+	case 0xDE: sbc(Mem->read8(pc++)); break;
 	case 0xDF: call(0x0018); break;
 	case 0xE0: LDar(0xff00 + Mem->read8(pc++), AF.high); break;
 	case 0xE1: pop(HL); break;
@@ -281,7 +404,12 @@ void CPU::And(uint8_t reg){
 void CPU::adc(uint8_t value){
 	if (flags.carry)
 		value++;
+	clearFlags();
 	AF.high = AF.high + value;
+	if (AF.high < value)
+		flags.carry = true;
+	if (AF.high == 0)
+		flags.zero = true;
 }
 void CPU::inc(uint16_t address)
 {
@@ -429,4 +557,40 @@ void CPU::CBcode(uint8_t code){
 		cout << "pc " << hex << int(pc) << " " << int(Mem->read8(pc));
 		quit = true;
 	}
+}
+
+void CPU::addn(uint8_t reg) {
+	clearFlags();
+	uint8_t temp = reg + AF.high; 
+	if (reg + AF.high < AF.high)
+		flags.carry = true;
+	if (temp == 0x0)
+		flags.zero = true;
+	AF.high = temp;
+}
+
+void CPU::sub(uint8_t reg) {
+	clearFlags();
+	flags.subtract = true;
+	if (AF.high < 0)
+		flags.carry = true;
+	if ((reg & 0xF) - (AF.high & 0xF) < 0)
+		flags.halfcarry = true;
+	AF.high = AF.high - reg;
+	if (AF.high == 0)
+		flags.zero = true;
+}
+
+void CPU::sbc(uint8_t reg) {
+	if (flags.carry)
+		reg++;
+	clearFlags();
+	flags.subtract = true;
+	if (AF.high < 0)
+		flags.carry = true;
+	if ((reg & 0xF) - (AF.high & 0xF) < 0)
+		flags.halfcarry = true;
+	AF.high = AF.high - reg;
+	if (AF.high == 0)
+		flags.zero = true;
 }

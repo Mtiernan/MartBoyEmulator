@@ -59,7 +59,7 @@ int main(int argc, char*args[])
 			Emulator.update();
 			ppu.update();
 
-			if (Emulator.pc == 0x2F2)
+			if (Emulator.pc == 0x2F2fffff)
 				debug = true;
 			if (debug) {
 				char x;
@@ -79,8 +79,9 @@ int main(int argc, char*args[])
 		}			
 		Emulator.cycles = 0;
 	ppu.getBackground();
-	}
 	ppu.vid.render(ppu.background);
+	}
+	
   	return 0;
 
 }

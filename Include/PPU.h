@@ -24,7 +24,7 @@ struct tile{
 class Video{
 public:
 	int int_window();
-	void render(int* background);
+	void render(uint8_t* background);
 	int framebuffer[GBWIDTH * GBHEIGHT];
 
 private:
@@ -48,7 +48,7 @@ public:
 	uint8_t status;
 	uint8_t scrX, scrY;
 
-	int background[65536];
+	uint8_t background[65536];
 	void getBackground();
 	void scanLine();
 	void render();

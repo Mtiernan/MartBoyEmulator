@@ -20,7 +20,7 @@ int Video::int_window() {
 	return 0;
 }
 
-void Video::render(int* background) {
+void Video::render(uint8_t* background) {
 
 	for (int x = 0; x < 65536; x++){
 		if(background[x] == 1)

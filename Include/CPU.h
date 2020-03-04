@@ -36,12 +36,13 @@ public:
 	void xOR(uint8_t value);
 	void And(uint8_t value);
 	void add(sixReg& reg, sixReg& reg2);
+	void addn(uint8_t reg2);
 	void adc(uint8_t value);
 	void incn(uint8_t &reg);
 	void decn(uint8_t &reg);
 	void RLCr(uint8_t &reg);
-	void sbc();
-	void sub();
+	void sbc(uint8_t reg);
+	void sub(uint8_t reg);
 	void LDnn(sixReg &reg, uint16_t address);
 	void LDn(uint8_t &reg, uint16_t address);
 	void LDDrn(uint8_t& reg, sixReg& reg2, bool neg);
