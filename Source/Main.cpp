@@ -59,11 +59,11 @@ int main(int argc, char*args[])
 			Emulator.update();
 			ppu.update();
 
-			if (Emulator.pc == 0x2F2fffff)
+			if (Emulator.pc == 0xfffff)
 				debug = true;
 			if (debug) {
 				char x;
-				ppu.vid.render(ppu.background);
+               
 				std::cout << "PC: " << std::hex << int(Emulator.pc) << std::endl;
 				std::cout << "SP: " << std::hex << int(Emulator.sp) << std::endl;
 				std::cout << "AF: " << std::hex << int(Emulator.AF.to16()) << std::endl;
@@ -78,8 +78,10 @@ int main(int argc, char*args[])
 			}
 		}			
 		Emulator.cycles = 0;
-	ppu.getBackground();
-	ppu.vid.render(ppu.background);
+		ppu.drawTileSet();
+		ppu.vid.render(ppu.vid.framebuffer);
+	//ppu.getBackground();
+	//ppu.vid.render(ppu.background);
 	}
 	
   	return 0;

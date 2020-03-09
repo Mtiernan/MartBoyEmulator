@@ -4,8 +4,8 @@
 #include "Memory.h"
 #include <SDL.h>
 
-#define GBWIDTH 255
-#define GBHEIGHT 255
+#define GBWIDTH 160
+#define GBHEIGHT 144
 
 enum mode{
 	HBLANK,
@@ -24,7 +24,7 @@ struct tile{
 class Video{
 public:
 	int int_window();
-	void render(uint8_t* background);
+	void render(int* background);
 	int framebuffer[GBWIDTH * GBHEIGHT];
 
 private:
@@ -53,6 +53,7 @@ public:
 	void scanLine();
 	void render();
 	void update();
+	void drawTileSet();
 	void drawBackTile(int num, int tilepoint);
 	
 };

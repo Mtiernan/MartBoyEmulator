@@ -11,28 +11,28 @@ int Video::int_window() {
 		return 1;
 	}
 
-	SDL_CreateWindowAndRenderer(GBWIDTH * 2, GBHEIGHT* 2, 0, &win, &ren);
+	SDL_CreateWindowAndRenderer(GBWIDTH * 4, GBHEIGHT* 4, 0, &win, &ren);
 	SDL_RenderClear(ren);
 	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 	SDL_RenderFillRect(ren, NULL);
 	SDL_RenderPresent(ren);
-	SDL_RenderSetScale(ren, 2, 2);
+	SDL_RenderSetScale(ren, 4, 4);
 	return 0;
 }
 
-void Video::render(uint8_t* background) {
+void Video::render(int* background) {
+	SDL_RenderClear(ren);
+	for (int x = 0; x < GBWIDTH * GBHEIGHT; x++){
+		if(background[x] == 4)
+			SDL_SetRenderDrawColor(ren, 64, 64, 64, 255);
+		else if(background[x] == 3 )
+			SDL_SetRenderDrawColor(ren, 128, 128, 128, 255);
+		else if(background[x]== 2)
+			SDL_SetRenderDrawColor(ren, 196, 196, 196, 255);
+		else if(background[x] == 1)
+			SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 
-	for (int x = 0; x < 65536; x++){
-		if(background[x] == 1)
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 64);
-		else if(background[x] == 2 )
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 128);
-		else if(background[x]== 3)
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 192);
-		else if(background[x] == 4)
-			SDL_SetRenderDrawColor(ren, 0, 0, 0, 255);
-
-		SDL_RenderDrawPoint(ren,x%255,x/255);
+		SDL_RenderDrawPoint(ren,x%GBWIDTH,x/GBHEIGHT);
 	}
 	SDL_RenderPresent(ren);
 	
@@ -154,7 +154,7 @@ void PPU::drawBackTile(int num, int tilePoint)
 		uint16_t color = Mem->read16(tilePoint);
 		for (int pixel = 0; pixel < 8; pixel++) {
 			int pcolor = 0;
-			switch (color && 0xC000) {
+			switch (color & 0xC000) {
 				case 0xc000: pcolor = 4; break;
 				case 0x4000: pcolor = 3; break;
 				case 0x2000: pcolor = 2; break;
@@ -164,5 +164,28 @@ void PPU::drawBackTile(int num, int tilePoint)
 			color = color << 2;
 		}
 		tilePoint += 2;
+
+	}
+}
+void PPU::drawTileSet() {
+		uint16_t backPoint = 0x8000;
+		int pcolor = 0;
+		uint16_t line = Mem->read16(backPoint);
+	for (int j = 0; j < 256; j++) {
+	
+		for (int zz = 0; zz < 8; zz++){
+			for (int z = 0; z < 8; z++) {
+				switch (line & 0xc000) {
+				case 0xc000: pcolor = 4; break;
+				case 0x4000: pcolor = 3; break;
+				case 0x2000: pcolor = 2; break;
+				case 0x0000: pcolor = 1; break;
+				}
+				vid.framebuffer[((j % 20 * 8) + z) + (((j / 20) * 8) + zz) * 160] = pcolor;
+				line = line << 2;
+			}
+			backPoint += 2;
+			line = Mem->read16(backPoint);
+		}
 	}
 }
