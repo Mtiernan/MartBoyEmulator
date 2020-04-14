@@ -48,7 +48,7 @@ public:
 	uint8_t status;
 	uint8_t scrX, scrY;
 
-	uint8_t background[65536];
+	int background[65536];
 	void getBackground();
 	void scanLine();
 	void render();

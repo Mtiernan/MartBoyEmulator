@@ -11,7 +11,7 @@ int Video::int_window() {
 		return 1;
 	}
 
-	SDL_CreateWindowAndRenderer(GBWIDTH * 4, GBHEIGHT* 4, 0, &win, &ren);
+	SDL_CreateWindowAndRenderer(GBWIDTH*4, GBHEIGHT*4, 0, &win, &ren);
 	SDL_RenderClear(ren);
 	SDL_SetRenderDrawColor(ren, 255, 255, 255, 255);
 	SDL_RenderFillRect(ren, NULL);
@@ -140,9 +140,9 @@ void PPU::getBackground() {
 	start = 0x9800;
 	uint8_t tilenum;
 	bgpointer = 0x8800;
-	for (int x = 1; x < 1024 ; x++) {
+	for (int x = 0; x < 1024 ; x++) {
 		tilenum = Mem->read8(start);
-		drawBackTile(x, bgpointer + tilenum);
+		drawBackTile(x, bgpointer + (tilenum *16));
 	}
 }
 
@@ -151,17 +151,19 @@ void PPU::drawBackTile(int num, int tilePoint)
 	int y = num / 32;
 	int x = num % 32;
 	for (int line = 0; line < 8;  line++) {
-		uint16_t color = Mem->read16(tilePoint);
+		uint8_t color = Mem->read8(tilePoint);
+		uint8_t color2 = Mem->read8(tilePoint + 1);
 		for (int pixel = 0; pixel < 8; pixel++) {
 			int pcolor = 0;
-			switch (color & 0xC000) {
-				case 0xc000: pcolor = 4; break;
-				case 0x4000: pcolor = 3; break;
-				case 0x2000: pcolor = 2; break;
-				case 0x0000: pcolor = 1; break;
+			switch ((color & 0x80) | ((color2 & 0x80) >> 1 )){
+				case 0xc0: pcolor = 4; break;
+				case 0x40: pcolor = 3; break;
+				case 0x20: pcolor = 2; break;
+				case 0x00: pcolor = 1; break;
 			}
-			background[(y*255) + pixel + x] = pcolor;
-			color = color << 2;
+			background[(((y*8) + line)*256) + pixel + x] = pcolor;
+			color = color << 1;
+			color2 = color << 1;
 		}
 		tilePoint += 2;
 
@@ -170,22 +172,25 @@ void PPU::drawBackTile(int num, int tilePoint)
 void PPU::drawTileSet() {
 		uint16_t backPoint = 0x8000;
 		int pcolor = 0;
-		uint16_t line = Mem->read16(backPoint);
+		uint8_t line = Mem->read8(backPoint);
+		uint8_t line2 = Mem->read8(backPoint +1);
 	for (int j = 0; j < 256; j++) {
 	
 		for (int zz = 0; zz < 8; zz++){
 			for (int z = 0; z < 8; z++) {
-				switch (line & 0xc000) {
-				case 0xc000: pcolor = 4; break;
-				case 0x4000: pcolor = 3; break;
-				case 0x2000: pcolor = 2; break;
-				case 0x0000: pcolor = 1; break;
+				switch ((line & 0x80) | ((line2 & 0x80) >>1)) {
+				case 0xc0: pcolor = 4; break;
+				case 0x80: pcolor = 3; break;
+				case 0x40: pcolor = 2; break;
+				case 0x00: pcolor = 1; break;
 				}
 				vid.framebuffer[((j % 20 * 8) + z) + (((j / 20) * 8) + zz) * 160] = pcolor;
-				line = line << 2;
+				line = line << 1;
+				line2 = line2 << 1;
 			}
 			backPoint += 2;
-			line = Mem->read16(backPoint);
+			line = Mem->read8(backPoint);
+			line2 = Mem->read8(backPoint + 1);
 		}
 	}
 }
