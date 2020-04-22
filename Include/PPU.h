@@ -4,8 +4,8 @@
 #include "Memory.h"
 #include <SDL.h>
 
-#define GBWIDTH 160
-#define GBHEIGHT 144
+#define GBWIDTH 255
+#define GBHEIGHT 255
 
 enum mode{
 	HBLANK,
@@ -54,7 +54,7 @@ public:
 	void render();
 	void update();
 	void drawTileSet();
-	void drawBackTile(int num, int tilepoint);
+	void drawBackTile(int num, int tilepoint, int tnum);
 	
 };
 

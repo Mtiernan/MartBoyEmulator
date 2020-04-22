@@ -120,13 +120,40 @@ void PPU::update() {
 }
 void PPU::getBackground() {
 	//loop through entire background map
+	int map_address = 0x9800;
+	for (int x = 0; x < 1024; x++) {
+		drawBackTile(Mem->read8(map_address) * 16, 0x8000,x);
+		map_address++;
 
+	}
 }
 
-void PPU::drawBackTile(int num, int tilePoint)
+void PPU::drawBackTile(int num, int tilePoint, int tnum)
 {
-	
+	uint16_t tpoint = num  + tilePoint;
+	uint8_t line = Mem->read8(tpoint);
+	uint8_t line2 = Mem->read8(tpoint+ 1);
+	int pcolor = 0;
+		for (int tline = 0; tline < 8; tline++) {
+			for (int dot = 0; dot < 8; dot++) {
+				switch ((line & 0x80) | ((line2 & 0x80) >> 1)) {
+				case 0xc0: pcolor = 4; break;
+				case 0x80: pcolor = 3; break;
+				case 0x40: pcolor = 2; break;
+				case 0x00: pcolor = 1; break;
+				}
+				background[((tnum % 32 * 8) + dot) + ((((tnum / 32) * 8) + tline) * 255)] = pcolor;
+				line = line << 1;
+				line2 = line2 << 1;
+			
+		}
+			tpoint += 2;
+			line = Mem->read8(tpoint);
+			line2 = Mem->read8(tpoint + 1);
+
+	}
 }
+
 void PPU::drawTileSet() {
 		uint16_t backPoint = 0x8000;
 		int pcolor = 0;

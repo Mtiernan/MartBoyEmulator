@@ -6,9 +6,6 @@ using namespace std;
 Memory::Memory() 
 {
 
-	
-
-
 
 }
 void Memory::loadRom() {

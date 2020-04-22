@@ -78,10 +78,9 @@ int main(int argc, char*args[])
 			}
 		}			
 		Emulator.cycles = 0;
-		ppu.drawTileSet();
-		ppu.vid.render(ppu.vid.framebuffer);
-	//ppu.getBackground();
-	//ppu.vid.render(ppu.background);
+		//ppu.drawTileSet();
+		ppu.getBackground();
+		ppu.vid.render(ppu.background);
 	}
 	
   	return 0;
