@@ -45,7 +45,7 @@ int main(int argc, char*args[])
 		if (SDL_PollEvent(&event))
 			if (event.type == SDL_WINDOWEVENT) {
 				if (event.window.event == SDL_WINDOWEVENT_CLOSE)
-					quit = true;
+					Emulator.quit = true;
 			}
  			else if (event.type == SDL_KEYDOWN)
    				input.getKeyDown(event);

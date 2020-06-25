@@ -3,7 +3,9 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-
+/.vscode
+/build
+CMakeLists.txt
 # User-specific files
 *.suo
 *.user
@@ -297,3 +299,4 @@ __pycache__/
 *.odx.cs
 *.xsd.cs
 /MartinBoyEmulator/MartinBoyEmulator/SDL2.dll
+
